@@ -112,6 +112,18 @@
         .nav-item.active { color: var(--text-main); }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2d3436">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2964/2964514.png">
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log("Service Worker activé !"))
+          .catch((err) => console.log("Erreur SW :", err));
+      }
+    </script>
 </head>
 <body>
 
@@ -450,4 +462,5 @@
 </script>
 
 </body>
+
 </html>
