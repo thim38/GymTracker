@@ -312,15 +312,28 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 
 }
 
-/* --- FIX BARRE DE NAVIGATION (ZONE MORTE ANDROID) --- */
+/* --- FIX NAVIGATION : MODE CAPSULE FLOTTANTE --- /
 
 .nav-bar {
-    /* Ajoute de l'espace VIDE en bas pour laisser la place aux boutons Android */
-    padding-bottom: 35px !important; 
-    
-    /* S'assure que la barre grandit pour contenir cet espace */
-    height: auto !important; 
-    
-    /* Optionnel : Utilise la zone de sécurité native si le téléphone le supporte */
-    padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
+    / 1. On annule l'erreur précédente /
+    padding-bottom: 0 !important; 
+    height: 65px !important; / On force une hauteur fixe et propre /
+
+    / 2. On décolle la barre du sol pour éviter les boutons Android /
+    bottom: 20px !important; 
+
+    / 3. On lui donne un look "Capsule" centré /
+    width: 90% !important;      / Ne prend pas toute la largeur /
+    left: 5% !important;        / Centré (5% à gauche + 90% + 5% à droite) /
+    border-radius: 30px !important; / Bords bien arrondis /
+
+    / 4. Grosse ombre pour bien la voir flotter /
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3) !important;
+
+    / 5. On s'assure que les boutons dedans sont bien centrés /
+    display: flex !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    background-color: white !important; / Fond blanc (ou ta couleur de thème) */
+    z-index: 9999 !important;
 }
