@@ -309,4 +309,18 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     z-index: 10;
     cursor: pointer;
+
+}
+
+/* --- FIX BARRE DE NAVIGATION (ZONE MORTE ANDROID) --- */
+
+.nav-bar {
+    /* Ajoute de l'espace VIDE en bas pour laisser la place aux boutons Android */
+    padding-bottom: 35px !important; 
+    
+    /* S'assure que la barre grandit pour contenir cet espace */
+    height: auto !important; 
+    
+    /* Optionnel : Utilise la zone de sécurité native si le téléphone le supporte */
+    padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
 }
