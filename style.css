@@ -16,10 +16,8 @@ h1 { text-align: center; margin-bottom: 30px; font-weight: 900; text-transform: 
 @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
 .anim-right { animation: slideInRight 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 .anim-left { animation: slideInLeft 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-@keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(2deg); } 75% { transform: rotate(-2deg); } 100% { transform: rotate(0deg); } }
 
-/* --- INPUTS & SELECTS (STYLE D'ORIGINE) --- */
+/* --- INPUTS & SELECTS --- */
 select { width: 100%; padding: 16px; border-radius: 16px; border: 1px solid transparent; background: #fff; font-size: 1rem; margin-bottom: 25px; font-weight: 700; outline: none; text-align: center; text-align-last: center; box-shadow: var(--shadow); -webkit-appearance: none; appearance: none; cursor: pointer; transition: transform 0.1s; }
 select:active { transform: scale(0.98); }
 
@@ -121,15 +119,15 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 .btn-backup { background: var(--brand); color: white; width: 100%; padding: 12px; margin-bottom: 10px; font-size: 0.9rem; }
 .btn-restore { background: #636e72; color: white; width: 100%; padding: 12px; font-size: 0.9rem; }
 
-/* --- FIX NAVIGATION : PIXEL PERFECT --- */
+/* --- NAVIGATION BAR : SEULE ET UNIQUE --- */
 .nav-bar {
     position: fixed !important;
     
-    /* 1. Placement Vertical (Bas de l'écran) */
-    bottom: 25px !important;      
-    height: 60px !important;      /* HAUTEUR FIXE 60px */
+    /* PLACEMENT CLEAN */
+    bottom: 30px !important;      /* Flotte joliment au-dessus du bord */
+    height: 55px !important;      /* Taille fine et moderne */
     
-    /* 2. Centrage Absolu */
+    /* CENTRAGE PARFAIT */
     width: 90% !important;        
     max-width: 400px !important;  
     left: 0 !important;           
@@ -142,172 +140,23 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     border-radius: 35px !important;
     box-shadow: 0 10px 25px rgba(0,0,0,0.3) !important;
     
-    /* Alignement interne */
     display: flex !important;
     justify-content: space-around !important;
     align-items: center !important;
     
-    /* Z-INDEX : SOUS LE PANEL */
-    z-index: 100 !important;     
+    z-index: 1000 !important;     
     padding-bottom: 0 !important;
 }
 .nav-bar.scroll-hidden { transform: translateY(150%) !important; opacity: 0; pointer-events: none; }
 .nav-item { background: transparent; color: #adb5bd; font-size: 0.9rem; font-weight: 700; border: none; }
 .nav-item.active { color: var(--text-main); transform: scale(1.1); }
 
-/* --- V108 FIXED GLASS TIMER BAR (Version Fine & Compacte) --- */
-#fixedTimerBar {
-    position: fixed !important; 
-    
-    /* 1. Placement Vertical (10px au-dessus du menu) */
-    /* 25px (marge bas) + 60px (menu) + 10px (espace) = 95px */
-    bottom: 95px !important; 
-    
-    /* 2. Centrage Absolu (Identique au menu) */
-    width: 90% !important; 
-    max-width: 400px !important; 
-    left: 0 !important; 
-    right: 0 !important; 
-    margin: 0 auto !important;
-    transform: none !important;
-
-    /* 3. TAILLE FINE (Auto) */
-    height: auto !important;     /* S'adapte au texte */
-    padding: 8px 0 !important;   /* Marge interne fine pour l'élégance */
-    
-    background: rgba(255, 255, 255, 0.65); 
-    backdrop-filter: blur(25px) saturate(110%); -webkit-backdrop-filter: blur(25px) saturate(110%);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border-radius: 35px !important; /* Mêmes arrondis que le menu */
-    
-    display: flex; justify-content: center; align-items: center; 
-    z-index: 1000; cursor: pointer;
-    transition: all 0.2s ease;
-}
-#fixedTimerBar:active { transform: scale(0.98) !important; }
-#fixedTimerBar.alert { background: rgba(255, 107, 107, 0.85); animation: pulse 1s infinite; }
-#fixedTimerBar.scroll-lowered { bottom: 20px !important; }
-.timer-bar-text { font-size: 1.2rem; font-weight: 900; color: var(--text-main); font-variant-numeric: tabular-nums; }
-#fixedTimerBar.alert .timer-bar-text { color: white; }
-
-/* --- TIMER PANEL (Mobile Pro Sheet) --- */
-#timerPanel {
-    position: fixed; bottom: 0; left: 0; width: 100%;
-    background: #fafbfc; border-radius: 28px 28px 0 0;
-    box-shadow: 0 -8px 32px rgba(0,0,0,0.12);
-    
-    /* Z-INDEX TRÈS HAUT (Au-dessus de tout) */
-    z-index: 2000 !important; 
-    
-    padding: 12px 28px 36px; transform: translateY(100%);
-    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-    text-align: center; touch-action: pan-y;
-}
-#timerPanel.timer-panel-dragging { transition: none; }
-#timerPanel.open { transform: translateY(0); }
-
-.timer-panel-handle {
-    width: 40px; height: 5px; background: #d1d8e0; border-radius: 3px;
-    margin: 0 auto 24px; cursor: grab; flex-shrink: 0;
-}
-.timer-panel-handle:active { cursor: grabbing; }
-
-.timer-display {
-    font-size: 5.2rem; font-weight: 900; color: var(--text-main);
-    font-variant-numeric: tabular-nums; margin-bottom: 28px; letter-spacing: -2px;
-    line-height: 1;
-}
-
-.timer-controls {
-    display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px;
-}
-.timer-btn-round {
-    display: flex; align-items: center; justify-content: center;
-    border: none; cursor: pointer; font-weight: 700; transition: transform 0.15s;
-}
-.timer-btn-round:active { transform: scale(0.94); }
-.timer-btn-adj {
-    width: 56px; height: 56px; border-radius: 50%;
-    background: #e9ecef; color: var(--text-main); font-size: 1rem;
-}
-.timer-btn-hero {
-    width: 72px; height: 72px; border-radius: 50%;
-    background: rgba(45, 52, 54, 0.9); color: #fff; font-size: 1.6rem;
-    box-shadow: 0 6px 20px rgba(45, 52, 54, 0.35);
-}
-.timer-btn-reset {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: transparent; color: #b2bec3; font-size: 1rem;
-}
-
-/* CUSTOM PRESETS (Pills) */
-.timer-presets-section {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
-}
-.timer-presets-title {
-    font-size: 0.75rem; font-weight: 600; color: #b2bec3;
-    text-transform: uppercase; letter-spacing: 0.5px;
-}
-.timer-presets-header {
-    display: flex; gap: 8px;
-}
-
-.btn-icon-action {
-    width: 32px; height: 32px; border-radius: 50%; border: none;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 900; cursor: pointer; transition: 0.2s;
-}
-#btnEditPresets { color: var(--text-gray); background: var(--input-bg); font-size: 0.95rem; }
-#btnEditPresets.active { background: var(--brand); color: white; box-shadow: 0 2px 8px rgba(45, 52, 54, 0.2); }
-#btnAddPreset { color: var(--brand); background: var(--input-bg); font-size: 1.3rem; line-height: 1; }
-#btnAddPreset:active { transform: scale(0.9); }
-
-.timer-presets-scroll {
-    display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch; scrollbar-width: none;
-}
-.timer-presets-scroll::-webkit-scrollbar { display: none; }
-
-.btn-preset {
-    flex: 0 0 auto; min-width: 72px; padding: 14px 20px; border-radius: 24px;
-    background: #f1f3f5; color: #636e72; font-weight: 700; font-size: 0.95rem;
-    border: none; transition: 0.2s;
-    border: 2px solid transparent !important;
-    box-sizing: border-box !important;
-    position: relative !important;
-}
-.btn-preset:active { background: #e9ecef; }
-.btn-preset.shake { animation: shake 0.3s infinite; background: #f1f3f5; color: var(--text-gray); border-color: transparent !important; }
-
-.preset-delete-badge {
-    position: absolute !important;
-    top: -5px !important;
-    right: -5px !important;
-    width: 18px;
-    height: 18px;
-    background-color: #ff4757;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    z-index: 10;
-    cursor: pointer;
-}
-
-.overlay-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
-.overlay-backdrop.show { opacity: 1; pointer-events: auto; }
-
 /* --- CORRECTION FOND SUPERSET --- */
 .superset-wrapper,
 .prog-line-superset, 
 .prog-line-superset-b {
-    background-color: transparent !important; /* Enlève le gris */
-    box-shadow: none !important; /* Enlève l'ombre */
+    background-color: transparent !important;
+    box-shadow: none !important;
 }
 
 /* --- CORRECTION ALIGNEMENT MOBILE --- */
@@ -321,13 +170,13 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 }
 .prog-line-name {
     flex: 1;
-    white-space: normal !important; /* Retour à la ligne autorisé */
+    white-space: normal !important;
     text-align: left;
     overflow: hidden;
 }
 .prog-line-info {
     flex-shrink: 0;
-    white-space: nowrap !important; /* Force une seule ligne */
+    white-space: nowrap !important;
     text-align: right;
     font-weight: bold;
 }
