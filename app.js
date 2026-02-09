@@ -1,7 +1,8 @@
 // --- BASE DE DONNÉES ---
 let DB = {
     progs: JSON.parse(localStorage.getItem('gym_v8_progs')) || {},
-    history: JSON.parse(localStorage.getItem('gym_v21_history')) || []
+    history: JSON.parse(localStorage.getItem('gym_v21_history')) || [],
+    weight: JSON.parse(localStorage.getItem('gym_weight')) || []
 };
 
 let currentSessionLogs = [];
@@ -10,7 +11,7 @@ let currentEditingIndex = -1;
 let currentCalDate = new Date(); 
 let currentTabIndex = 0; 
 
-// ÉTAT HISTORIQUE : 'list' ou 'calendar'
+// ÉTAT HISTORIQUE : 'list', 'calendar', 'weight'
 let historyMode = 'list'; 
 let historyState = { view: 'categories', selected: null };
 let currentProgramKey = ''; 
@@ -37,8 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSelectMenu();
     renderProgramList();
     renderHistory();
-    // Le calendrier est rendu via renderHistory() si besoin, mais on init ici au cas où
-    renderCalendar(); 
+    renderCalendar();
+    
+    // Initialiser la date du jour pour le poids
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('weightDateInput');
+    if(dateInput) dateInput.value = today;
 
     if (savedSession) {
         try {
@@ -62,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- NAVIGATION PRINCIPALE (BAS) ---
+// --- NAVIGATION PRINCIPALE ---
 function switchTab(viewName, btn, newIndex) {
     if (newIndex === currentTabIndex) return;
     const direction = newIndex > currentTabIndex ? 'right' : 'left';
@@ -84,11 +89,10 @@ function switchTab(viewName, btn, newIndex) {
     const titleEl = document.getElementById('mainTitle');
     if(viewName === 'seance') titleEl.innerText = "Ma Séance";
     if(viewName === 'progs') titleEl.innerText = "Mon Programme";
-    
-    // Si on va sur l'historique, on vérifie quel mode est actif
     if(viewName === 'history') { 
         updateHistoryTitle(); 
         if(historyMode === 'calendar') renderCalendar();
+        if(historyMode === 'weight') renderWeightView();
     }
 }
 
@@ -281,8 +285,6 @@ function terminerLaSeance(progName) {
         alert("Séance sauvegardée !"); 
         document.getElementById('selectProgram').value = ""; currentProgramKey = "";
         document.getElementById('zoneTravail').innerHTML = ""; document.getElementById('zoneFinSeance').innerHTML = ""; 
-        
-        // Reset l'historique sur la vue liste pour voir la nouvelle séance
         historyMode = 'list'; historyState.view = 'categories'; historyState.selected = null; 
         updateHistoryTabsUI(); renderHistory(); 
     } 
@@ -368,15 +370,21 @@ function switchHistoryMode(mode) {
     
     const listView = document.getElementById('history-subview-list');
     const calView = document.getElementById('history-subview-calendar');
+    const weightView = document.getElementById('history-subview-weight');
+    
+    listView.classList.add('hidden');
+    calView.classList.add('hidden');
+    weightView.classList.add('hidden');
     
     if (mode === 'list') {
         listView.classList.remove('hidden');
-        calView.classList.add('hidden');
         renderHistory();
-    } else {
-        listView.classList.add('hidden');
+    } else if (mode === 'calendar') {
         calView.classList.remove('hidden');
         renderCalendar();
+    } else if (mode === 'weight') {
+        weightView.classList.remove('hidden');
+        renderWeightView();
     }
     updateHistoryTitle();
 }
@@ -384,20 +392,19 @@ function switchHistoryMode(mode) {
 function updateHistoryTabsUI() {
     document.getElementById('switchList').classList.toggle('active', historyMode === 'list');
     document.getElementById('switchCal').classList.toggle('active', historyMode === 'calendar');
+    document.getElementById('switchWeight').classList.toggle('active', historyMode === 'weight');
 }
 
 function updateHistoryTitle() {
     const titleEl = document.getElementById('mainTitle');
-    if (historyMode === 'list') {
-        titleEl.innerText = "Mon Historique";
-    } else {
-        titleEl.innerText = "Mon Calendrier";
-    }
+    if (historyMode === 'list') { titleEl.innerText = "Mon Historique"; } 
+    else if (historyMode === 'calendar') { titleEl.innerText = "Mon Calendrier"; }
+    else if (historyMode === 'weight') { titleEl.innerText = "Suivi Poids"; }
 }
 
 // --- LOGIQUE LISTE HISTORIQUE ---
 function renderHistory() { 
-    if(historyMode !== 'list') return; // Ne rien faire si on est en mode calendrier
+    if(historyMode !== 'list') return; 
     const container = document.getElementById('listeHistorique'); 
     const titleEl = document.getElementById('histMainTitle'); 
     const btnEl = document.getElementById('histActionBtn'); 
@@ -421,37 +428,28 @@ function renderHistory() {
     } 
 }
 
-function resetHistoryOnly() { if(confirm("Effacer tout l'historique ?")) { DB.history = []; localStorage.setItem('gym_v21_history', JSON.stringify([])); historyState.view = 'categories'; renderHistory(); renderCalendar(); } }
-function deleteCategoryHistory(catName) { if(confirm("Effacer tout l'historique pour " + catName + " ?")) { DB.history = DB.history.filter(s => s.programName !== catName); localStorage.setItem('gym_v21_history', JSON.stringify(DB.history)); historyState.view = 'categories'; historyState.selected = null; renderHistory(); renderCalendar(); } }
+function resetHistoryOnly() { if(confirm("Effacer tout l'historique ?")) { DB.history = []; localStorage.setItem('gym_v21_history', JSON.stringify([])); historyState.view = 'categories'; renderHistory(); } }
+function deleteCategoryHistory(catName) { if(confirm("Effacer tout l'historique pour " + catName + " ?")) { DB.history = DB.history.filter(s => s.programName !== catName); localStorage.setItem('gym_v21_history', JSON.stringify(DB.history)); historyState.view = 'categories'; historyState.selected = null; renderHistory(); } }
 
 // --- LOGIQUE CALENDRIER ---
 function renderCalendar() {
+    if(historyMode !== 'calendar') return;
     const grid = document.getElementById('calendarGrid');
     const monthDisplay = document.getElementById('calMonthDisplay');
-    // Sécurité si l'élément n'existe pas encore dans le DOM
     if(!grid || !monthDisplay) return;
-    
     grid.innerHTML = '';
     const year = currentCalDate.getFullYear();
     const month = currentCalDate.getMonth();
     const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
     monthDisplay.innerText = `${monthNames[month]} ${year}`;
-    
     const firstDayOfMonth = new Date(year, month, 1).getDay(); 
     let adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    
-    for (let i = 0; i < adjustedFirstDay; i++) {
-        const emptyCell = document.createElement('div');
-        grid.appendChild(emptyCell);
-    }
+    for (let i = 0; i < adjustedFirstDay; i++) { const emptyCell = document.createElement('div'); grid.appendChild(emptyCell); }
     const today = new Date();
     for (let d = 1; d <= daysInMonth; d++) {
-        const cell = document.createElement('div');
-        cell.className = 'cal-day active-month';
-        cell.innerText = d;
-        const cellDateObj = new Date(year, month, d);
-        const cellDateStr = cellDateObj.toLocaleDateString(); 
+        const cell = document.createElement('div'); cell.className = 'cal-day active-month'; cell.innerText = d;
+        const cellDateObj = new Date(year, month, d); const cellDateStr = cellDateObj.toLocaleDateString(); 
         if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) cell.classList.add('today');
         const hasSession = DB.history.some(s => s.date === cellDateStr);
         if (hasSession) cell.classList.add('has-session');
@@ -470,10 +468,178 @@ function showDayDetails(dateStr) {
     const sessions = DB.history.filter(s => s.date === dateStr);
     if (sessions.length === 0) { listDiv.innerHTML = '<div style="color:#b2bec3; font-style:italic;">Aucune séance ce jour-là.</div>'; return; }
     sessions.forEach(s => {
-        const item = document.createElement('div');
-        item.className = 'session-item-detail';
+        const item = document.createElement('div'); item.className = 'session-item-detail';
         item.innerHTML = `<span>${s.programName}</span> <small style="color:#636e72">Voir Historique pour détails</small>`;
         listDiv.appendChild(item);
+    });
+}
+
+// --- LOGIQUE POIDS & GRAPHIQUE ---
+function renderWeightView() {
+    if(historyMode !== 'weight') return;
+    renderWeightList();
+    drawWeightChart();
+}
+
+function addWeightEntry() {
+    const dateInput = document.getElementById('weightDateInput');
+    const valInput = document.getElementById('weightValueInput');
+    const dateVal = dateInput.value;
+    const weightVal = parseFloat(valInput.value);
+    
+    if(!dateVal || isNaN(weightVal)) return alert("Date ou poids invalide");
+    
+    // On garde juste la date YYYY-MM-DD
+    DB.weight.push({ date: dateVal, value: weightVal });
+    
+    // Tri par date
+    DB.weight.sort((a,b) => new Date(a.date) - new Date(b.date));
+    
+    localStorage.setItem('gym_weight', JSON.stringify(DB.weight));
+    valInput.value = '';
+    renderWeightView();
+}
+
+function deleteWeight(index) {
+    if(confirm("Supprimer cette pesée ?")) {
+        DB.weight.splice(index, 1);
+        localStorage.setItem('gym_weight', JSON.stringify(DB.weight));
+        renderWeightView();
+    }
+}
+
+function renderWeightList() {
+    const listDiv = document.getElementById('weightHistoryList');
+    listDiv.innerHTML = '';
+    // On affiche du plus récent au plus vieux pour la liste
+    const sortedForList = [...DB.weight].reverse();
+    
+    if(sortedForList.length === 0) {
+        listDiv.innerHTML = '<p style="text-align:center; color:#b2bec3;">Aucune donnée.</p>';
+        return;
+    }
+    
+    sortedForList.forEach((item, index) => {
+        // L'index réel dans DB.weight est (length - 1 - index) car on a reverse
+        const realIndex = DB.weight.length - 1 - index;
+        const d = new Date(item.date);
+        const dateStr = d.toLocaleDateString();
+        
+        listDiv.innerHTML += `
+            <div class="weight-item">
+                <span class="weight-date">${dateStr}</span>
+                <div style="display:flex; align-items:center;">
+                    <span class="weight-val">${item.value} kg</span>
+                    <button class="btn-del-weight" onclick="deleteWeight(${realIndex})">✖</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function drawWeightChart() {
+    const canvas = document.getElementById('weightChart');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    // Resize canvas pour la haute résolution
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    
+    const w = rect.width;
+    const h = rect.height;
+    
+    ctx.clearRect(0, 0, w, h);
+    
+    if (DB.weight.length < 2) {
+        ctx.fillStyle = "#b2bec3";
+        ctx.font = "14px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Ajoutez au moins 2 mesures pour voir le graphique", w/2, h/2);
+        return;
+    }
+    
+    // Marges
+    const padLeft = 40;
+    const padRight = 20;
+    const padTop = 20;
+    const padBottom = 30;
+    
+    const graphW = w - padLeft - padRight;
+    const graphH = h - padTop - padBottom;
+    
+    // Min/Max
+    const values = DB.weight.map(i => i.value);
+    let minVal = Math.min(...values);
+    let maxVal = Math.max(...values);
+    
+    // Un peu de marge en haut et en bas du graph
+    const range = maxVal - minVal;
+    minVal -= (range * 0.1) || 1; // si range 0
+    maxVal += (range * 0.1) || 1;
+    
+    // Dessin Axes (optionnel, on fait simple)
+    ctx.strokeStyle = "#eee";
+    ctx.lineWidth = 1;
+    
+    // Ligne du bas
+    ctx.beginPath();
+    ctx.moveTo(padLeft, h - padBottom);
+    ctx.lineTo(w - padRight, h - padBottom);
+    ctx.stroke();
+    
+    // Trajet
+    ctx.beginPath();
+    ctx.strokeStyle = "#2d3436";
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    
+    const stepX = graphW / (DB.weight.length - 1);
+    
+    const points = DB.weight.map((item, i) => {
+        const x = padLeft + (i * stepX);
+        // Inversion Y : 0 en haut
+        const ratio = (item.value - minVal) / (maxVal - minVal);
+        const y = (h - padBottom) - (ratio * graphH);
+        return {x, y, val: item.value, date: item.date};
+    });
+    
+    ctx.moveTo(points[0].x, points[0].y);
+    for(let i=1; i<points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
+    }
+    ctx.stroke();
+    
+    // Points et Labels
+    ctx.fillStyle = "#2d3436";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    
+    points.forEach(p => {
+        // Point
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 5, 0, Math.PI*2);
+        ctx.fill();
+        
+        // Valeur au dessus
+        ctx.fillText(p.val, p.x, p.y - 10);
+    });
+    
+    // Dates en bas (seulement premier et dernier pour pas surcharger ?)
+    ctx.fillStyle = "#636e72";
+    ctx.font = "10px sans-serif";
+    
+    // Afficher quelques dates intelligemment
+    const dateStep = Math.ceil(points.length / 5);
+    points.forEach((p, i) => {
+        if (i % dateStep === 0 || i === points.length - 1) {
+            const d = new Date(p.date);
+            const str = `${d.getDate()}/${d.getMonth()+1}`;
+            ctx.fillText(str, p.x, h - 5);
+        }
     });
 }
 
@@ -491,11 +657,17 @@ function importData(input) {
         reader.onload = function(e) {
             try {
                 const data = JSON.parse(e.target.result);
-                if (data.progs && data.history) {
-                    if(confirm("Attention : Cela va remplacer toutes vos données actuelles. Continuer ?")) {
-                        DB = data;
+                // Compatible avec ancienne et nouvelle structure
+                if (data.progs || data.history) {
+                    if(confirm("Remplacer les données ?")) {
+                        DB = {
+                            progs: data.progs || {},
+                            history: data.history || [],
+                            weight: data.weight || [] // Import du poids aussi
+                        };
                         localStorage.setItem('gym_v8_progs', JSON.stringify(DB.progs));
                         localStorage.setItem('gym_v21_history', JSON.stringify(DB.history));
+                        localStorage.setItem('gym_weight', JSON.stringify(DB.weight));
                         alert("Données restaurées !");
                         location.reload();
                     }
