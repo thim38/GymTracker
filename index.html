@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gym Tracker V112 Final</title>
+    <title>Gym Tracker V114 Stable</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2d3436">
@@ -29,11 +29,10 @@
     <div class="settings-content">
         <div class="settings-section">
             <h3>Données</h3>
-            <p class="settings-desc">Sauvegardez vos progrès ou importez un fichier.</p>
-            <button class="btn-backup" onclick="exportData()">Sauvegarder</button>
-            <button class="btn-restore" onclick="triggerImport()">Importer</button>
+            <button class="btn-backup" onclick="exportData()">Sauvegarder les données</button>
+            <button class="btn-restore" onclick="triggerImport()">Importer les données</button>
             <input type="file" id="importFile" style="display:none" onchange="importData(this)">
-            <div style="height:15px"></div>
+            <div style="height:20px"></div>
             <button class="btn-danger-outline" onclick="resetHistoryOnly()">Réinitialiser l'historique</button>
         </div>
     </div>
@@ -64,7 +63,7 @@
                 </div>
             </div>
             <div id="blockExoB" class="builder-block hidden">
-                <span class="builder-label">Exercice B (Superset)</span>
+                <span class="builder-label">Superset</span>
                 <input type="text" id="buildExoNameB" placeholder="Nom du 2ème exercice" style="margin-bottom:10px;">
                 <div class="builder-row">
                     <input type="number" id="buildSeriesB" placeholder="Séries" min="1">
@@ -77,8 +76,8 @@
                     <button id="btnAddSupersetSwitch" class="btn-add-superset" onclick="activerModeSuperset()">Ajouter un Superset</button>
                 </div>
                 <div id="btnGroupSuperset" class="hidden">
-                    <button id="btnAddSupersetConfirm" class="btn-add-superset" style="background:#2d3436; color:#fff;" onclick="validerSupersetBuilder()">Valider le Superset</button>
-                    <button class="btn-cancel" onclick="annulerModeSuperset()">Annuler le Superset</button>
+                    <button id="btnAddSupersetConfirm" class="btn-add-superset" style="background:#2d3436; color:#fff;" onclick="validerSupersetBuilder()">Valider Superset</button>
+                    <button class="btn-cancel" onclick="annulerModeSuperset()">Annuler</button>
                 </div>
             </div>
             <div id="builderListDisplay" style="margin-bottom:15px; margin-top:15px;"></div>
