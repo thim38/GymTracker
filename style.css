@@ -10,51 +10,52 @@ h1 { text-align: center; margin-bottom: 30px; font-weight: 900; text-transform: 
 
 /* --- ICONE PARAMETRES (NOUVEAU) --- */
 .btn-settings-icon {
-    position: absolute; top: 5px; right: 5px;
-    background: transparent; border: none; color: var(--text-main);
+    position: absolute; top: 15px; right: 15px;
+    background: #fff; border: 1px solid #eee; color: var(--text-main);
     width: 40px; height: 40px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; z-index: 200;
+    cursor: pointer; z-index: 200; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
-.btn-settings-icon:active { background: rgba(0,0,0,0.05); }
+.btn-settings-icon:active { transform: scale(0.95); }
 
 /* --- MODAL PARAMETRES (NOUVEAU) --- */
 .settings-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 5000; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; animation: fadeInUp 0.3s ease; }
 .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-top: 10px; }
 .settings-header h2 { margin: 0; font-weight: 900; text-transform: uppercase; }
-.btn-close-settings { background: #e9ecef; border: none; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; color: #636e72; }
+.btn-close-settings { background: #e9ecef; border: none; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; color: #636e72; display: flex; align-items: center; justify-content: center; }
 .settings-section { background: #fff; border-radius: 24px; padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
 .settings-section h3 { margin-top: 0; font-size: 1rem; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; color: #b2bec3; }
 
-/* --- NAVIGATION BAR --- */
-.nav-bar {
-    position: fixed; bottom: 30px; height: 55px; width: 90%; max-width: 400px; left: 0; right: 0; margin: 0 auto;
-    background-color: #fff; border-radius: 35px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    display: flex; justify-content: space-around; align-items: center; z-index: 1000;
-    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-}
-.nav-bar.scroll-hidden { transform: translateY(150%); pointer-events: none; }
-.nav-item { background: transparent; color: #adb5bd; font-size: 0.9rem; font-weight: 700; border: none; }
-.nav-item.active { color: var(--text-main); transform: scale(1.1); }
-
-/* --- INPUTS --- */
+/* --- INPUTS & SELECTS (STYLE D'ORIGINE) --- */
 select { width: 100%; padding: 16px; border-radius: 16px; border: 1px solid transparent; background: #fff; font-size: 1rem; margin-bottom: 25px; font-weight: 700; outline: none; text-align: center; text-align-last: center; box-shadow: var(--shadow); -webkit-appearance: none; appearance: none; }
 .input-wrapper { position: relative; flex: 1; min-width: 0; }
+/* INPUTS COMME AVANT : Fond gris clair, pas de bordure visible par défaut */
 input { width: 100%; padding: 14px; padding-right: 35px; background: var(--input-bg); border: 2px solid transparent; border-radius: 16px; font-weight: 600; font-size: 16px; color: var(--text-main); transition: 0.3s; }
 input:focus { outline: none; background: #fff; border-color: #dfe6e9; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .unit-label { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 0.75rem; font-weight: 700; color: #b2bec3; pointer-events: none; }
 
-/* --- BOUTONS (RESTAURATION DU GROS BOUTON BLANC) --- */
-.builder-btn { 
-    width: 100%; padding: 16px; background: #fff; color: var(--text-main); 
-    box-shadow: var(--shadow); margin-bottom: 25px; border-radius: 16px; 
-    font-size: 1rem; border: 1px solid transparent; font-weight: 700; 
-    text-transform: none; cursor: pointer;
-}
+/* --- BOUTONS --- */
 button { border: none; font-weight: 700; border-radius: 16px; cursor: pointer; transition: transform 0.1s; }
 button:active { transform: scale(0.96); opacity: 0.9; }
+
+/* LE BOUTON BUILDER REVIENT COMME AVANT (Carte blanche) */
+.builder-btn { 
+    width: 100%; 
+    padding: 16px; /* Idem Select */
+    background: #fff; 
+    color: var(--text-main); 
+    box-shadow: var(--shadow); 
+    margin-bottom: 25px; 
+    border-radius: 16px; 
+    font-size: 1rem; 
+    border: 1px solid transparent; 
+    font-weight: 700;
+    text-align: center;
+}
+
 .btn-primary { width: 100%; padding: 15px; background: var(--text-main); color: #fff; font-size: 1rem; margin-top: 15px; }
 .btn-add { width: 100%; padding: 12px; background: #fff; border: 2px solid #f1f3f5; color: var(--text-main); margin-top: 5px; font-size: 0.9rem;}
+.btn-add:hover { border-color: #dee2e6; background: #f8f9fa; }
 .btn-add-superset { background: var(--btn-default-bg); color: var(--text-main); padding: 12px; width: 100%; margin-top:10px; font-size: 0.9rem; border: 1px solid var(--border-light); }
 .btn-danger { background: #495057; color: white; padding: 8px 16px; font-size: 0.8rem; border-radius: 14px; }
 .btn-cancel { background: transparent; color: #636e72; padding: 10px; width: 100%; margin-top: 5px; font-size: 0.8rem; }
@@ -66,7 +67,7 @@ button:active { transform: scale(0.96); opacity: 0.9; }
 .btn-restore { background: #636e72; color: white; width: 100%; padding: 12px; font-size: 0.9rem; border-radius: 16px; display: block;}
 .btn-danger-outline { background: transparent; border: 2px solid #ff7675; color: #ff7675; padding: 12px; border-radius: 16px; font-weight: 700; width: 100%; display: block;}
 
-/* --- CARDS & ITEMS --- */
+/* --- CARDS --- */
 .card { background: var(--bg-card); border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 25px; padding: 20px; border: 1px solid var(--border-light); border-left: 8px solid #ced4da; }
 .card-header { display: flex; flex-direction: column; gap:8px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f1f1f1; }
 .header-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
@@ -85,11 +86,11 @@ button:active { transform: scale(0.96); opacity: 0.9; }
 .drop-icon { font-size: 1.2rem; font-weight: 900; cursor: pointer; color: var(--text-main); }
 .last-perf { font-size: 0.75rem; color: #b2bec3; font-weight: 600; margin-top: 4px; margin-left: 45px; display: block; width: 100%; }
 
-/* --- CALENDRIER (CORRECTION GRILLE) --- */
+/* --- CALENDRIER (FORCE GRILLE CSS) --- */
 .calendar-wrapper { background: #fff; border-radius: 24px; padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
 .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .btn-cal-nav { background: var(--input-bg); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; font-size: 18px; display: flex; align-items: center; justify-content: center; }
-/* IMPORTANT : Force l'affichage en grille */
+/* GRILLE IMPÉRATIVE */
 .calendar-weekdays { display: grid !important; grid-template-columns: repeat(7, 1fr) !important; gap: 5px; margin-bottom: 10px; text-align: center; }
 .cal-weekday { font-size: 0.8rem; font-weight: 700; color: #b2bec3; text-transform: uppercase; }
 .calendar-grid { display: grid !important; grid-template-columns: repeat(7, 1fr) !important; gap: 6px; }
@@ -115,7 +116,7 @@ canvas { width: 100%; height: 100%; display: block; }
 .weight-val { font-weight: 800; color: var(--text-main); font-size: 1.1rem; }
 .btn-del-weight { background: #ffeaa7; color: #d63031; border: none; width: 30px; height: 30px; border-radius: 50%; margin-left: 10px; font-weight: bold; cursor: pointer; }
 
-/* --- BUILDER & HISTO ITEMS --- */
+/* --- BUILDER & HISTO --- */
 .builder-item { background: #f8f9fa; border: 1px solid #eee; border-radius: 16px; margin-bottom: 10px; padding: 15px 40px 15px 15px; position: relative; }
 .builder-item.editing-active { border: 2px solid var(--brand); background-color: #fff; transform: scale(1.02); }
 .delete-x { position: absolute; top: 12px; right: 15px; color: var(--text-gray); font-weight: 900; font-size: 1.1rem; padding: 5px; }
@@ -142,6 +143,17 @@ canvas { width: 100%; height: 100%; display: block; }
 .prog-line-name { font-weight: 700; color: #2d3436; font-size: 0.95rem; flex: 1; text-align: left; }
 .prog-line-info { color: #636e72; font-size: 0.85rem; font-weight: 600; flex-shrink: 0; text-align: right; }
 
+/* --- NAVIGATION BAR --- */
+.nav-bar {
+    position: fixed; bottom: 30px; height: 55px; width: 90%; max-width: 400px; left: 0; right: 0; margin: 0 auto;
+    background-color: #fff; border-radius: 35px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    display: flex; justify-content: space-around; align-items: center; z-index: 1000;
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+.nav-bar.scroll-hidden { transform: translateY(150%); pointer-events: none; }
+.nav-item { background: transparent; color: #adb5bd; font-size: 0.9rem; font-weight: 700; border: none; }
+.nav-item.active { color: var(--text-main); transform: scale(1.1); }
+
 /* --- ANIMATIONS --- */
 @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -150,7 +162,7 @@ canvas { width: 100%; height: 100%; display: block; }
 .anim-right { animation: slideInRight 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 .anim-left { animation: slideInLeft 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 
-/* --- CLEANUP --- */
+/* --- NETTOYAGE --- */
 #fixedTimerBar, #timerPanel, #overlayBackdrop { display: none !important; }
 .superset-wrapper, .prog-line-superset, .prog-line-superset-b { background-color: transparent !important; box-shadow: none !important; }
 .prog-line, .prog-line-superset, .prog-line-superset-b { display: flex !important; justify-content: space-between !important; align-items: center !important; gap: 15px; }
