@@ -3,16 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gym Tracker V111 Settings</title>
-    
+    <title>Gym Tracker V112 Final</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-    
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2d3436">
     <link rel="apple-touch-icon" href="icon.png">
-
     <link rel="stylesheet" href="style.css">
-    
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch((err) => console.log(err));
@@ -30,22 +26,15 @@
         <h2>Paramètres</h2>
         <button class="btn-close-settings" onclick="toggleSettings()">✖</button>
     </div>
-    
     <div class="settings-content">
         <div class="settings-section">
-            <h3>Gestion des données</h3>
-            <p class="settings-desc">Sauvegardez vos progrès ou importez un fichier de sauvegarde.</p>
-            
-            <button class="btn-backup" onclick="exportData()">Sauvegarder mes données</button>
-            <button class="btn-restore" onclick="triggerImport()">Importer une sauvegarde</button>
+            <h3>Données</h3>
+            <p class="settings-desc">Sauvegardez vos progrès ou importez un fichier.</p>
+            <button class="btn-backup" onclick="exportData()">Sauvegarder</button>
+            <button class="btn-restore" onclick="triggerImport()">Importer</button>
             <input type="file" id="importFile" style="display:none" onchange="importData(this)">
-            
-            <button class="btn-danger-outline" onclick="resetHistoryOnly()" style="margin-top:15px; width:100%;">Réinitialiser l'historique</button>
-        </div>
-
-        <div class="settings-section" style="opacity:0.5;">
-            <h3>Application</h3>
-            <p class="settings-desc">Version 1.11</p>
+            <div style="height:15px"></div>
+            <button class="btn-danger-outline" onclick="resetHistoryOnly()">Réinitialiser l'historique</button>
         </div>
     </div>
 </div>
@@ -63,20 +52,17 @@
 
     <div id="view-progs" class="app-view hidden">
         <button class="builder-btn" onclick="toggleBuilder()">Créer une Séance</button>
-        
         <div id="builderArea" class="hidden">
             <h3 style="margin-top:0">Nouvelle Séance</h3>
             <input type="text" id="newProgName" placeholder="Nom de la séance" style="margin-bottom:15px;">
-            
             <div class="builder-block">
-                <span id="labelExoA" class="builder-label hidden">Exercice A (Principal)</span>
+                <span id="labelExoA" class="builder-label hidden">Exercice A</span>
                 <input type="text" id="buildExoName" placeholder="Nom de l'exercice" style="margin-bottom:10px;">
                 <div class="builder-row">
                     <input type="number" id="buildSeries" placeholder="Séries" min="1">
                     <input type="text" id="buildReps" placeholder="Reps (ex: 10-12)">
                 </div>
             </div>
-            
             <div id="blockExoB" class="builder-block hidden">
                 <span class="builder-label">Exercice B (Superset)</span>
                 <input type="text" id="buildExoNameB" placeholder="Nom du 2ème exercice" style="margin-bottom:10px;">
@@ -85,7 +71,6 @@
                     <input type="text" id="buildRepsB" placeholder="Reps (ex: 10-12)">
                 </div>
             </div>
-            
             <div id="builderButtons">
                 <div id="btnGroupNormal">
                     <button id="btnAddNormal" class="btn-add" onclick="ajouterExoAuBuilder()">Ajouter</button>
@@ -96,16 +81,13 @@
                     <button class="btn-cancel" onclick="annulerModeSuperset()">Annuler le Superset</button>
                 </div>
             </div>
-            
             <div id="builderListDisplay" style="margin-bottom:15px; margin-top:15px;"></div>
-            <button id="btnSaveProg" class="btn-primary" onclick="sauvegarderProgrammeFinal()">Sauvegarder la Séance</button>
+            <button id="btnSaveProg" class="btn-primary" onclick="sauvegarderProgrammeFinal()">Sauvegarder</button>
         </div>
-
         <div id="listeMesProgrammes"></div>
     </div>
 
     <div id="view-history" class="app-view hidden">
-        
         <div class="segmented-control">
             <button id="switchList" class="segment-btn active" onclick="switchHistoryMode('list')">Liste</button>
             <button id="switchCal" class="segment-btn" onclick="switchHistoryMode('calendar')">Calendrier</button>
@@ -114,10 +96,10 @@
 
         <div id="history-subview-list">
             <div style="display:flex; justify-content:space-between; margin-bottom:20px; align-items:center;">
-                <h3 id="histMainTitle" style="margin:0; text-transform:uppercase;">Types de Séances</h3>
-                </div>
-            <div id="listeHistorique"></div>
+                <h3 id="histMainTitle" style="margin:0; text-transform:uppercase;">Historique</h3>
             </div>
+            <div id="listeHistorique"></div>
+        </div>
 
         <div id="history-subview-calendar" class="hidden">
             <div class="calendar-wrapper">
@@ -141,19 +123,14 @@
             <div class="weight-input-area">
                 <input type="date" id="weightDateInput" class="date-input-styled">
                 <div style="display:flex; gap:10px; flex:1;">
-                    <input type="number" id="weightValueInput" placeholder="Poids (kg)" step="0.1" inputmode="decimal">
+                    <input type="number" id="weightValueInput" placeholder="kg" step="0.1" inputmode="decimal">
                     <button class="btn-add-weight" onclick="addWeightEntry()">+</button>
                 </div>
             </div>
-            <div class="chart-container">
-                <canvas id="weightChart"></canvas>
-            </div>
-            <h4 style="color:#b2bec3; font-size:0.8rem; margin-top:20px; margin-bottom:10px;">HISTORIQUE DU POIDS</h4>
+            <div class="chart-container"><canvas id="weightChart"></canvas></div>
             <div id="weightHistoryList"></div>
         </div>
-
     </div>
-
 </div>
 
 <nav class="nav-bar">
@@ -163,6 +140,5 @@
 </nav>
 
 <script src="app.js"></script>
-
 </body>
 </html>
