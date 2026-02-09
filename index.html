@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gym Tracker V109 Fusion</title>
+    <title>Gym Tracker V110 Poids</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     
@@ -80,6 +80,7 @@
         <div class="segmented-control">
             <button id="switchList" class="segment-btn active" onclick="switchHistoryMode('list')">Liste</button>
             <button id="switchCal" class="segment-btn" onclick="switchHistoryMode('calendar')">Calendrier</button>
+            <button id="switchWeight" class="segment-btn" onclick="switchHistoryMode('weight')">Poids</button>
         </div>
 
         <div id="history-subview-list">
@@ -113,6 +114,23 @@
                 <h4 style="color:#b2bec3; font-size:0.9rem; text-transform:uppercase;">Détails du jour</h4>
                 <div id="daySessionsList" style="margin-top:10px; color:#636e72;">Cliquez sur un jour pour voir les détails.</div>
             </div>
+        </div>
+
+        <div id="history-subview-weight" class="hidden">
+            <div class="weight-input-area">
+                <input type="date" id="weightDateInput" class="date-input-styled">
+                <div style="display:flex; gap:10px; flex:1;">
+                    <input type="number" id="weightValueInput" placeholder="Poids (kg)" step="0.1" inputmode="decimal">
+                    <button class="btn-add-weight" onclick="addWeightEntry()">+</button>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="weightChart"></canvas>
+            </div>
+            
+            <h4 style="color:#b2bec3; font-size:0.8rem; margin-top:20px; margin-bottom:10px;">HISTORIQUE DU POIDS</h4>
+            <div id="weightHistoryList"></div>
         </div>
 
     </div>
