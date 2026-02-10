@@ -49,6 +49,7 @@ h1 { text-align: center; margin-bottom: 30px; font-weight: 900; text-transform: 
     margin-bottom: 20px;
     align-items: center;
 }
+/* MODIFICATION ICI : Largeur augmentée pour voir la date */
 .date-input-styled {
     border: none;
     background: #fff;
@@ -57,7 +58,7 @@ h1 { text-align: center; margin-bottom: 30px; font-weight: 900; text-transform: 
     font-family: inherit;
     color: var(--text-gray);
     box-shadow: var(--shadow);
-    width: 130px;
+    width: 160px; /* Passé de 130px à 160px */
 }
 .btn-add-weight {
     background: var(--brand);
