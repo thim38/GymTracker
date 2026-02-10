@@ -194,7 +194,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     left: 0;
     width: 100%;
     /* Visuellement 45px, mais 20px de sécurité en plus pour le bas */
-    height: 45px;            
+    height: 85px;            
     background: #ffffff;
     display: flex;
     justify-content: space-around;
@@ -216,3 +216,4 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 .prog-line, .prog-line-superset, .prog-line-superset-b { display: flex !important; justify-content: space-between !important; align-items: center !important; gap: 15px; }
 .prog-line-name { flex: 1; white-space: normal !important; text-align: left; overflow: hidden; }
 .prog-line-info { flex-shrink: 0; white-space: nowrap !important; text-align: right; font-weight: bold; }
+
