@@ -399,7 +399,8 @@ function updateHistoryTitle() {
     const titleEl = document.getElementById('mainTitle');
     if (historyMode === 'list') { titleEl.innerText = "Mon Historique"; } 
     else if (historyMode === 'calendar') { titleEl.innerText = "Mon Calendrier"; }
-    else if (historyMode === 'weight') { titleEl.innerText = "Suivi Poids"; }
+    /* MODIFICATION ICI : Titre changé */
+    else if (historyMode === 'weight') { titleEl.innerText = "Mon Suivi de Poids"; }
 }
 
 // --- LOGIQUE LISTE HISTORIQUE ---
