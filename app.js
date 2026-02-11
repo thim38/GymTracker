@@ -49,23 +49,50 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const sessionState = JSON.parse(savedSession);
             const select = document.getElementById('selectProgram');
+            
+            // On vérifie que le programme existe toujours
             if (select.querySelector(`option[value="${sessionState.prog}"]`)) {
                 select.value = sessionState.prog;
                 currentProgramKey = sessionState.prog;
                 
-                // 1. On charge l'historique (ce qui est validé) AVANT l'interface
+                // 1. On charge l'historique (ce qui est validé)
                 if (sessionState.logs) {
                     currentSessionLogs = sessionState.logs;
                 }
                 
-                // 2. On construit l'interface (les boutons validés deviendront noirs et bloqués)
+                // 2. On construit l'interface de base
                 chargerInterface(false);
                 
-                // 3. On remplit les chiffres (MÊME si c'est bloqué/validé)
+                // 3. RESTAURATION DES DROP SETS (CORRECTIF)
                 if (sessionState.inputs) {
+                    // On cherche les inputs de type 'drop_w_...' pour savoir où recréer des lignes
+                    const dropMap = {};
+                    Object.keys(sessionState.inputs).forEach(key => {
+                        if (key.startsWith('drop_w_')) {
+                            // Format: drop_w_{idx}_{set}_{dropIndex}
+                            const parts = key.split('_'); 
+                            // parts[2] = idx Exo, parts[3] = Num Série, parts[4] = Index Drop
+                            const baseId = `${parts[2]}_${parts[3]}`; 
+                            const dropIdx = parseInt(parts[4]);
+                            
+                            if (!dropMap[baseId] || dropIdx > dropMap[baseId]) {
+                                dropMap[baseId] = dropIdx;
+                            }
+                        }
+                    });
+
+                    // On recrée les lignes manquantes
+                    Object.keys(dropMap).forEach(baseId => {
+                        const count = dropMap[baseId] + 1; // +1 car l'index commence à 0
+                        for(let i=0; i<count; i++) {
+                            // On ajoute la ligne (sans hint pour la restauration simple)
+                            ajouterDegressive(baseId, '', '', 0, true);
+                        }
+                    });
+
+                    // 4. On remplit TOUS les chiffres (Maintenant que les cases existent)
                     Object.keys(sessionState.inputs).forEach(id => {
                         const el = document.getElementById(id);
-                        // ICI : On force l'écriture même si le champ est désactivé
                         if (el) el.value = sessionState.inputs[id];
                     });
                 }
@@ -198,7 +225,9 @@ function chargerInterface(shouldClear = true) {
 }
 
 function createInputWithUnit(id, unit) { return `<div class="input-wrapper"><input type="number" id="${id}" placeholder="" min="0" oninput="if(this.value!=='')this.value=Math.abs(this.value)"><span class="unit-label">${unit}</span></div>`; }
-function createDropInput(className, unit) { return `<div class="input-wrapper"><input type="number" class="${className}" placeholder="" min="0" oninput="if(this.value!=='')this.value=Math.abs(this.value)"><span class="unit-label">${unit}</span></div>`; }
+
+// MODIF: createDropInput prend maintenant un ID
+function createDropInput(id, className, unit) { return `<div class="input-wrapper"><input type="number" id="${id}" class="${className}" placeholder="" min="0" oninput="if(this.value!=='')this.value=Math.abs(this.value)"><span class="unit-label">${unit}</span></div>`; }
 
 function getSplitPerf(exoName, setNum, progName) {
     const lastSession = DB.history.find(session => session.programName === progName && session.details && session.details.some(log => log.exo === exoName));
@@ -250,15 +279,30 @@ function renderSuperset(container, exoA, idxA, exoB, idxB, progName) {
     container.innerHTML += html; 
 }
 
-function ajouterDegressive(baseId, exoName, progName, setNum) { 
+// MODIF: AJOUT D'ID ET LOGIQUE DE RESTAURATION
+function ajouterDegressive(baseId, exoName, progName, setNum, restorationMode = false) { 
     const container = document.getElementById('container_' + baseId); 
+    // On calcule l'index du drop pour créer un ID unique
+    const dropIndex = container.querySelectorAll('.drop-row').length;
+    const dropWeightId = `drop_w_${baseId}_${dropIndex}`;
+    const dropRepsId = `drop_r_${baseId}_${dropIndex}`;
+
     const div = document.createElement('div'); div.className = 'input-row drop-row'; 
-    const data = getSplitPerf(exoName, setNum, progName);
-    const dropHint = (data && data.drop) ? `<span class="last-perf" style="margin-left:45px;">Précédent : ${data.drop}</span>` : '';
-    div.innerHTML = `<div class="set-col"><div class="drop-icon" onclick="this.closest('.drop-row').remove()" title="Supprimer">↳</div></div>${createDropInput('drop-weight', 'kg')}${createDropInput('drop-reps', 'reps')}`; 
+    
+    // Si on restaure, on n'affiche pas forcément le hint s'il est vide, mais ici on le garde simple
+    let dropHint = '';
+    if (!restorationMode) {
+        const data = getSplitPerf(exoName, setNum, progName);
+        dropHint = (data && data.drop) ? `<span class="last-perf" style="margin-left:45px;">Précédent : ${data.drop}</span>` : '';
+    }
+
+    div.innerHTML = `<div class="set-col"><div class="drop-icon" onclick="this.closest('.drop-row').remove(); saveCurrentSessionState();" title="Supprimer">↳</div></div>${createDropInput(dropWeightId, 'drop-weight', 'kg')}${createDropInput(dropRepsId, 'drop-reps', 'reps')}`; 
     div.style.flexWrap = "wrap";
     if(dropHint) div.innerHTML += `<div style="width:100%;">${dropHint}</div>`;
+    
     container.appendChild(div); 
+    
+    // Ajout de l'écouteur pour la sauvegarde auto
     div.querySelectorAll('input').forEach(i => i.addEventListener('input', saveCurrentSessionState));
 }
 
@@ -472,26 +516,16 @@ function handleDropLogic(fromIndex, toIndex) {
     let isSupersetA = (itemA.isSuperset && tempBuilderList[fromIndex+1] && tempBuilderList[fromIndex+1].isSuperset);
     let sizeA = isSupersetA ? 2 : 1;
     let movingItems = tempBuilderList.slice(fromIndex, fromIndex + sizeA);
-    
-    // Retrait des items à leur ancienne place
     tempBuilderList.splice(fromIndex, sizeA);
+    let adjust = (fromIndex < toIndex) ? -sizeA : 0;
     
-    // Correction de l'index de destination si on a supprimé des éléments avant
-    let adjust = 0;
-    if (fromIndex < toIndex) {
-        // On a supprimé 'sizeA' éléments avant l'index cible, donc tout a reculé.
-        // Mais pour un déplacement "naturel" vers le bas, on veut souvent insérer APRÈS la cible visée.
-        // Si on ne fait rien, on insère à la place de la cible (donc avant elle).
-        // En enlevant l'ajustement négatif, on retrouve un comportement plus fluide pour le swap.
-        adjust = 0; 
-    }
+    // FIX : On compense pour que le drop soit plus intuitif
+    // Si on descend, on veut insérer APRES l'élément visé
+    if (fromIndex < toIndex) adjust = 0; 
     
     let finalDest = toIndex + adjust;
     if (finalDest < 0) finalDest = 0;
-    
-    // Insertion à la nouvelle place
     tempBuilderList.splice(finalDest, 0, ...movingItems);
-    
     renderBuilder();
 }
 
