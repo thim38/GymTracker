@@ -374,7 +374,7 @@ let dragOverIndex = -1;
 let longPressTimer = null;
 let isDraggingMode = false;
 
-// --- FONCTION RENDER BUILDER AVEC DRAG & DROP (SANS FLÈCHES) ---
+// --- FONCTION RENDER BUILDER AVEC DRAG & DROP (SANS TEXTE) ---
 function renderBuilder() { 
     const listDiv = document.getElementById('builderListDisplay'); 
     listDiv.innerHTML = ''; 
@@ -388,8 +388,6 @@ function renderBuilder() {
         let isSupersetStart = (item.isSuperset && tempBuilderList[i+1] && tempBuilderList[i+1].isSuperset);
         let isSupersetSecond = (item.isSuperset && tempBuilderList[i-1] && tempBuilderList[i-1].isSuperset);
 
-        // Si c'est la 2ème partie d'un superset, on ne peut pas le "draguer" seul, il suit le premier.
-        // Donc on met l'attribut draggable uniquement sur le 1er ou les solos.
         let draggableAttr = isSupersetSecond ? '' : 'data-draggable="true"';
 
         if (isSupersetStart) { 
@@ -404,7 +402,6 @@ function renderBuilder() {
                     <div style="margin-bottom:8px;"> <span class="builder-exo-name">${item.name}</span> <span class="builder-exo-info">${item.sets} x ${item.reps} reps</span> </div>
                     <div> <span class="builder-exo-name">${nextItem.name}</span> <span class="builder-exo-info">${nextItem.sets} x ${nextItem.reps} reps</span> </div>
                 </div>
-                <div style="margin-top:5px; font-size:10px; color:#b2bec3; font-weight:bold; letter-spacing:1px; text-align:center;">SUPERSET (Maintenir pour déplacer)</div>
             </div>`; 
             i++; 
         } else if (!isSupersetSecond) { 
@@ -424,39 +421,29 @@ function renderBuilder() {
     // --- AJOUT DES ÉCOUTEURS TACTILES (DRAG & DROP) ---
     const items = listDiv.querySelectorAll('.builder-item[data-draggable="true"]');
     items.forEach(el => {
-        // 1. TOUCH START : On lance le chrono pour détecter le maintien
         el.addEventListener('touchstart', (e) => {
-            if (e.target.classList.contains('delete-x')) return; // Ignore la croix
+            if (e.target.classList.contains('delete-x')) return; 
             
             dragSrcIndex = parseInt(el.getAttribute('data-index'));
-            isDraggingMode = false; // Reset
+            isDraggingMode = false; 
 
-            // Si on maintient 500ms, le mode drag s'active
             longPressTimer = setTimeout(() => {
                 isDraggingMode = true;
                 el.classList.add('dragging-active');
-                // Vibration haptique si dispo sur le tel
                 if (navigator.vibrate) navigator.vibrate(50);
             }, 500);
         }, { passive: false });
 
-        // 2. TOUCH MOVE : Si le mode drag est actif, on suit le doigt
         el.addEventListener('touchmove', (e) => {
             if (!isDraggingMode) {
-                // Si on bouge le doigt AVANT les 500ms, c'est un scroll, on annule le timer
                 clearTimeout(longPressTimer);
                 return;
             }
-
-            // Sinon, c'est un drag : on bloque le scroll de la page
             e.preventDefault(); 
-
-            // On regarde sur quel élément on passe
             const touch = e.touches[0];
             const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
             const closestItem = targetEl ? targetEl.closest('.builder-item') : null;
 
-            // Nettoyage visuel des anciens "over"
             document.querySelectorAll('.drag-over').forEach(i => i.classList.remove('drag-over'));
 
             if (closestItem && closestItem !== el) {
@@ -465,18 +452,14 @@ function renderBuilder() {
             }
         }, { passive: false });
 
-        // 3. TOUCH END : On lâche tout
         el.addEventListener('touchend', (e) => {
             clearTimeout(longPressTimer);
             el.classList.remove('dragging-active');
             document.querySelectorAll('.drag-over').forEach(i => i.classList.remove('drag-over'));
 
             if (isDraggingMode && dragOverIndex !== -1 && dragSrcIndex !== -1 && dragSrcIndex !== dragOverIndex) {
-                // --- LOGIQUE D'ÉCHANGE ---
                 handleDropLogic(dragSrcIndex, dragOverIndex);
             }
-            
-            // Reset
             isDraggingMode = false;
             dragSrcIndex = -1;
             dragOverIndex = -1;
@@ -484,30 +467,29 @@ function renderBuilder() {
     });
 }
 
-// Fonction auxiliaire pour gérer l'échange dans le tableau
 function handleDropLogic(fromIndex, toIndex) {
-    // 1. Identifier la taille du bloc déplacé (1 ou 2 si superset)
     let itemA = tempBuilderList[fromIndex];
     let isSupersetA = (itemA.isSuperset && tempBuilderList[fromIndex+1] && tempBuilderList[fromIndex+1].isSuperset);
     let sizeA = isSupersetA ? 2 : 1;
-
-    // 2. Extraire le bloc A
-    // Attention : si on déplace de bas en haut ou haut en bas, l'index change après splice
-    
-    // On copie les éléments à bouger
     let movingItems = tempBuilderList.slice(fromIndex, fromIndex + sizeA);
     
-    // On les supprime du tableau
+    // Retrait des items à leur ancienne place
     tempBuilderList.splice(fromIndex, sizeA);
     
-    // Si on a supprimé AVANT la destination, l'index de destination a reculé
-    let adjust = (fromIndex < toIndex) ? -sizeA : 0;
-    let finalDest = toIndex + adjust;
+    // Correction de l'index de destination si on a supprimé des éléments avant
+    let adjust = 0;
+    if (fromIndex < toIndex) {
+        // On a supprimé 'sizeA' éléments avant l'index cible, donc tout a reculé.
+        // Mais pour un déplacement "naturel" vers le bas, on veut souvent insérer APRÈS la cible visée.
+        // Si on ne fait rien, on insère à la place de la cible (donc avant elle).
+        // En enlevant l'ajustement négatif, on retrouve un comportement plus fluide pour le swap.
+        adjust = 0; 
+    }
     
-    // Sécurité
+    let finalDest = toIndex + adjust;
     if (finalDest < 0) finalDest = 0;
     
-    // On insère au nouvel endroit
+    // Insertion à la nouvelle place
     tempBuilderList.splice(finalDest, 0, ...movingItems);
     
     renderBuilder();
