@@ -1,16 +1,17 @@
-
-/* --- BLOCAGE TOTAL DU REFRESH (Haut -> Bas) --- */
+/* --- BLOCAGE TOTAL DU REFRESH & CORRECTION SCROLL --- */
 html, body {
-    /* C'est cette ligne magique qui bloque le rafraîchissement */
     overscroll-behavior-y: none !important; 
-    
-    /* Celle-ci bloque le retour page précédente (Gauche/Droite) */
     overscroll-behavior-x: none !important; 
     
-    height: 100%;       /* Indispensable pour que le blocage fonctionne */
-    overflow-x: hidden; /* Empêche le scroll horizontal */
+    /* C'ETAIT CA LE PROBLEME : On remplace height par min-height */
+    min-height: 100vh;      
+    
+    overflow-x: hidden; 
     margin: 0;
     padding: 0;
+    
+    /* On s'assure que le scroll se fait bien sur le body */
+    overflow-y: auto; 
 }
 
 /* --- VARIABLES --- */
@@ -391,6 +392,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     pointer-events: none !important;
     transition: transform 0.1s ease-out !important;
 }
+
 
 
 
