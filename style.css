@@ -319,3 +319,29 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     transition: transform 0.2s ease-out !important; /* Disparition rapide */
 }
 
+/* --- DRAG & DROP PROGRAMMES (Menu Principal) --- */
+
+.prog-item {
+    /* On ajoute la transition et la gestion du tactile */
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    touch-action: pan-y;
+    position: relative;
+}
+
+/* Style quand on déplace un programme */
+.prog-item.dragging-active {
+    opacity: 0.9;
+    background-color: #e9ecef !important; /* Gris neutre */
+    transform: scale(1.03);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    z-index: 100;
+    border: 2px solid #2d3436;
+    pointer-events: none; /* Important pour détecter la case du dessous */
+}
+
+/* Style de la case survolée */
+.prog-item.drag-over {
+    border: 2px dashed #b2bec3;
+    background-color: #f8f9fa;
+}
+
