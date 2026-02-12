@@ -11,7 +11,7 @@ let currentEditingIndex = -1;
 let currentCalDate = new Date(); 
 let currentTabIndex = 0; 
 
-// ÉTAT HISTORIQUE : 'list', 'calendar', 'weight'
+// ÉTAT HISTORIQUE
 let historyMode = 'list'; 
 let historyState = { view: 'categories', selected: null };
 let currentProgramKey = ''; 
@@ -50,20 +50,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const sessionState = JSON.parse(savedSession);
             const select = document.getElementById('selectProgram');
             
-            // On vérifie que le programme existe toujours
             if (select.querySelector(`option[value="${sessionState.prog}"]`)) {
                 select.value = sessionState.prog;
                 currentProgramKey = sessionState.prog;
                 
-                // 1. On charge l'historique (ce qui est validé)
                 if (sessionState.logs) {
                     currentSessionLogs = sessionState.logs;
                 }
                 
-                // 2. On construit l'interface de base
                 chargerInterface(false);
                 
-                // 3. RESTAURATION DES DROP SETS
+                // RESTAURATION INTELLIGENTE (Drop Sets & Valeurs)
                 if (sessionState.inputs) {
                     const dropMap = {};
                     Object.keys(sessionState.inputs).forEach(key => {
@@ -85,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     });
 
-                    // 4. On remplit TOUS les chiffres
                     Object.keys(sessionState.inputs).forEach(id => {
                         const el = document.getElementById(id);
                         if (el) el.value = sessionState.inputs[id];
@@ -99,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- NAVIGATION PRINCIPALE ---
 function switchTab(viewName, btn, newIndex) {
     if (newIndex === currentTabIndex) return;
-    const direction = newIndex > currentTabIndex ? 'right' : 'left';
     currentTabIndex = newIndex;
     
     const views = document.querySelectorAll('.app-view');
@@ -110,7 +105,10 @@ function switchTab(viewName, btn, newIndex) {
     
     const newView = document.getElementById('view-' + viewName);
     newView.classList.remove('hidden');
-    newView.classList.add(direction === 'right' ? 'anim-right' : 'anim-left');
+    
+    // Animation simple
+    const direction = newIndex > currentTabIndex ? 'anim-right' : 'anim-left';
+    newView.classList.add(direction);
     
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -169,10 +167,8 @@ function chargerInterface(shouldClear = true) {
         const exoA = exos[i]; const exoB = exos[i+1]; 
         
         if(exoA.isSuperset && exoB && exoB.isSuperset) { 
-            // 1. Afficher le Superset
             renderSuperset(zone, exoA, i, exoB, i+1, key); 
             
-            // 2. Vérifier si validé pour remettre le bouton NOIR et bloquer
             const isDone = currentSessionLogs.some(log => log.exo === exoA.name || log.exo === exoB.name);
             if(isDone) {
                 const btn = document.getElementById(`btn_finish_${i}`);
@@ -189,10 +185,8 @@ function chargerInterface(shouldClear = true) {
             }
             i++; 
         } else { 
-            // 1. Afficher l'exo Normal
             renderNormal(zone, exoA, i, key); 
             
-            // 2. Vérifier si validé pour remettre le bouton NOIR et bloquer
             const isDone = currentSessionLogs.some(log => log.exo === exoA.name);
             if(isDone) {
                 const btn = document.getElementById(`btn_finish_${i}`);
@@ -211,7 +205,6 @@ function chargerInterface(shouldClear = true) {
     } 
     btnZone.innerHTML = `<button class="btn-terminate-session" onclick="terminerLaSeance('${key}')">Terminer la Séance</button>`; 
     
-    // Ecouter les changements uniquement sur les inputs non bloqués
     document.querySelectorAll('#zoneTravail input').forEach(input => {
         if(!input.disabled) {
             input.addEventListener('input', saveCurrentSessionState);
@@ -220,7 +213,6 @@ function chargerInterface(shouldClear = true) {
 }
 
 function createInputWithUnit(id, unit) { return `<div class="input-wrapper"><input type="number" id="${id}" placeholder="" min="0" oninput="if(this.value!=='')this.value=Math.abs(this.value)"><span class="unit-label">${unit}</span></div>`; }
-
 function createDropInput(id, className, unit) { return `<div class="input-wrapper"><input type="number" id="${id}" class="${className}" placeholder="" min="0" oninput="if(this.value!=='')this.value=Math.abs(this.value)"><span class="unit-label">${unit}</span></div>`; }
 
 function getSplitPerf(exoName, setNum, progName) {
@@ -545,7 +537,6 @@ function renderProgramList() {
     const div = document.getElementById('listeMesProgrammes'); 
     div.innerHTML = ''; 
     
-    // On récupère les clés (noms des programmes)
     const progKeys = Object.keys(DB.progs);
 
     progKeys.forEach((k, index) => { 
@@ -576,12 +567,9 @@ function renderProgramList() {
         div.innerHTML += html; 
     });
 
-    // --- AJOUT ECOUTEURS TACTILES POUR PROGRAMMES ---
     const items = div.querySelectorAll('.prog-item');
     items.forEach(el => {
-        // 1. TOUCH START
         el.addEventListener('touchstart', (e) => {
-            // Si on touche un bouton, on ne lance pas le drag
             if (e.target.tagName === 'BUTTON') return;
 
             progDragSrcIndex = parseInt(el.getAttribute('data-index'));
@@ -590,17 +578,15 @@ function renderProgramList() {
             progLongPressTimer = setTimeout(() => {
                 isProgDraggingMode = true;
                 el.classList.add('dragging-active');
-                // On applique le style inline au cas où le CSS ne serait pas à jour
                 el.style.opacity = '0.9';
                 el.style.backgroundColor = '#e9ecef';
                 el.style.transform = 'scale(1.03)';
                 el.style.zIndex = '100';
-                el.style.pointerEvents = 'none'; // Crucial pour détecter l'élément dessous
+                el.style.pointerEvents = 'none'; 
                 if (navigator.vibrate) navigator.vibrate(50);
             }, 500); 
         }, { passive: false });
 
-        // 2. TOUCH MOVE
         el.addEventListener('touchmove', (e) => {
             if (!isProgDraggingMode) {
                 clearTimeout(progLongPressTimer);
@@ -614,22 +600,19 @@ function renderProgramList() {
 
             div.querySelectorAll('.drag-over').forEach(i => {
                 i.classList.remove('drag-over');
-                i.style.border = ''; // Clean inline style
+                i.style.border = ''; 
             });
 
             if (closestItem && closestItem !== el) {
                 closestItem.classList.add('drag-over');
-                // Style inline de fallback
                 closestItem.style.border = '2px dashed #b2bec3';
                 progDragOverIndex = parseInt(closestItem.getAttribute('data-index'));
             }
         }, { passive: false });
 
-        // 3. TOUCH END
         el.addEventListener('touchend', (e) => {
             clearTimeout(progLongPressTimer);
             el.classList.remove('dragging-active');
-            // Clean inline styles
             el.style.opacity = '';
             el.style.backgroundColor = '';
             el.style.transform = '';
@@ -656,17 +639,14 @@ function handleProgramDrop(fromIndex, toIndex) {
     const keys = Object.keys(DB.progs);
     const movedKey = keys[fromIndex];
     
-    // On déplace la clé dans le tableau
     keys.splice(fromIndex, 1);
     keys.splice(toIndex, 0, movedKey);
     
-    // On reconstruit un NOUVEL objet avec le bon ordre
     const newProgs = {};
     keys.forEach(key => {
         newProgs[key] = DB.progs[key];
     });
     
-    // On remplace et sauvegarde
     DB.progs = newProgs;
     localStorage.setItem('gym_v8_progs', JSON.stringify(DB.progs));
     
@@ -712,7 +692,6 @@ function updateHistoryTitle() {
     const titleEl = document.getElementById('mainTitle');
     if (historyMode === 'list') { titleEl.innerText = "Mon Historique"; } 
     else if (historyMode === 'calendar') { titleEl.innerText = "Mon Calendrier"; }
-    // TITRE MODIFIÉ ICI
     else if (historyMode === 'weight') { titleEl.innerText = "Mon Suivi de Poids"; }
 }
 
@@ -803,10 +782,8 @@ function addWeightEntry() {
     
     if(!dateVal || isNaN(weightVal)) return alert("Date ou poids invalide");
     
-    // On garde juste la date YYYY-MM-DD
     DB.weight.push({ date: dateVal, value: weightVal });
     
-    // Tri par date
     DB.weight.sort((a,b) => new Date(a.date) - new Date(b.date));
     
     localStorage.setItem('gym_weight', JSON.stringify(DB.weight));
@@ -825,7 +802,6 @@ function deleteWeight(index) {
 function renderWeightList() {
     const listDiv = document.getElementById('weightHistoryList');
     listDiv.innerHTML = '';
-    // On affiche du plus récent au plus vieux pour la liste
     const sortedForList = [...DB.weight].reverse();
     
     if(sortedForList.length === 0) {
@@ -834,7 +810,6 @@ function renderWeightList() {
     }
     
     sortedForList.forEach((item, index) => {
-        // L'index réel dans DB.weight est (length - 1 - index) car on a reverse
         const realIndex = DB.weight.length - 1 - index;
         const d = new Date(item.date);
         const dateStr = d.toLocaleDateString();
@@ -856,7 +831,6 @@ function drawWeightChart() {
     if(!canvas) return;
     const ctx = canvas.getContext('2d');
     
-    // Resize canvas pour la haute résolution
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * dpr;
@@ -873,13 +847,11 @@ function drawWeightChart() {
         ctx.font = "14px sans-serif";
         ctx.textAlign = "center";
         
-        // MODIFICATION ICI : On coupe la phrase en deux lignes pour que ça rentre
         ctx.fillText("Ajoutez 2 mesures", w/2, h/2 - 10);
         ctx.fillText("pour voir le graphique", w/2, h/2 + 15);
         return;
     }
     
-    // Marges
     const padLeft = 40;
     const padRight = 20;
     const padTop = 20;
@@ -888,27 +860,22 @@ function drawWeightChart() {
     const graphW = w - padLeft - padRight;
     const graphH = h - padTop - padBottom;
     
-    // Min/Max
     const values = DB.weight.map(i => i.value);
     let minVal = Math.min(...values);
     let maxVal = Math.max(...values);
     
-    // Un peu de marge en haut et en bas du graph
     const range = maxVal - minVal;
-    minVal -= (range * 0.1) || 1; // si range 0
+    minVal -= (range * 0.1) || 1; 
     maxVal += (range * 0.1) || 1;
     
-    // Dessin Axes (optionnel, on fait simple)
     ctx.strokeStyle = "#eee";
     ctx.lineWidth = 1;
     
-    // Ligne du bas
     ctx.beginPath();
     ctx.moveTo(padLeft, h - padBottom);
     ctx.lineTo(w - padRight, h - padBottom);
     ctx.stroke();
     
-    // Trajet
     ctx.beginPath();
     ctx.strokeStyle = "#2d3436";
     ctx.lineWidth = 3;
@@ -918,7 +885,6 @@ function drawWeightChart() {
     
     const points = DB.weight.map((item, i) => {
         const x = padLeft + (i * stepX);
-        // Inversion Y : 0 en haut
         const ratio = (item.value - minVal) / (maxVal - minVal);
         const y = (h - padBottom) - (ratio * graphH);
         return {x, y, val: item.value, date: item.date};
@@ -930,26 +896,21 @@ function drawWeightChart() {
     }
     ctx.stroke();
     
-    // Points et Labels
     ctx.fillStyle = "#2d3436";
     ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "center";
     
     points.forEach(p => {
-        // Point
         ctx.beginPath();
         ctx.arc(p.x, p.y, 5, 0, Math.PI*2);
         ctx.fill();
         
-        // Valeur au dessus
         ctx.fillText(p.val, p.x, p.y - 10);
     });
     
-    // Dates en bas (seulement premier et dernier pour pas surcharger ?)
     ctx.fillStyle = "#636e72";
     ctx.font = "10px sans-serif";
     
-    // Afficher quelques dates intelligemment
     const dateStep = Math.ceil(points.length / 5);
     points.forEach((p, i) => {
         if (i % dateStep === 0 || i === points.length - 1) {
@@ -960,38 +921,60 @@ function drawWeightChart() {
     });
 }
 
-// --- IMPORT / EXPORT ---
+// --- IMPORT / EXPORT (VERSION ANTI-CRASH / PRESSE-PAPIER) ---
 function exportData() {
     const dataStr = JSON.stringify(DB);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    const exportFileDefaultName = 'gym_tracker_backup_' + new Date().toLocaleDateString().replace(/\//g, '-') + '.json';
-    const linkElement = document.createElement('a'); linkElement.setAttribute('href', dataUri); linkElement.setAttribute('download', exportFileDefaultName); linkElement.click();
+    
+    navigator.clipboard.writeText(dataStr).then(function() {
+        alert("✅ Sauvegarde COPIÉE !\n\nOuvre ton appli 'Notes' (ou Samsung Notes), crée une nouvelle note et fais 'Coller' pour conserver tes données.");
+    }, function(err) {
+        prompt("Impossible de copier automatiquement. Copie ce texte manuellement et garde-le précieusement :", dataStr);
+    });
 }
-function triggerImport() { document.getElementById('importFile').click(); }
+
+function triggerImport() {
+    if(confirm("Comment veux-tu importer ?\n\nOK = Choisir un FICHIER (.json)\nANNULER = COLLER du texte")) {
+        document.getElementById('importFile').click();
+    } else {
+        setTimeout(() => {
+            const text = prompt("Colle le texte de ta sauvegarde ici :");
+            if(text) processImport(text);
+        }, 50);
+    }
+}
+
 function importData(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            try {
-                const data = JSON.parse(e.target.result);
-                // Compatible avec ancienne et nouvelle structure
-                if (data.progs || data.history) {
-                    if(confirm("Remplacer les données ?")) {
-                        DB = {
-                            progs: data.progs || {},
-                            history: data.history || [],
-                            weight: data.weight || [] // Import du poids aussi
-                        };
-                        localStorage.setItem('gym_v8_progs', JSON.stringify(DB.progs));
-                        localStorage.setItem('gym_v21_history', JSON.stringify(DB.history));
-                        localStorage.setItem('gym_weight', JSON.stringify(DB.weight));
-                        alert("Données restaurées !");
-                        location.reload();
-                    }
-                } else { alert("Fichier invalide."); }
-            } catch(err) { alert("Erreur fichier."); }
+            processImport(e.target.result);
         };
         reader.readAsText(input.files[0]);
+    }
+}
+
+function processImport(jsonString) {
+    try {
+        const data = JSON.parse(jsonString);
+        if (data.progs || data.history) {
+            if(confirm("⚠️ Attention : Cela va remplacer TOUTES tes données actuelles par cette sauvegarde.\n\nContinuer ?")) {
+                DB = {
+                    progs: data.progs || {},
+                    history: data.history || [],
+                    weight: data.weight || [] 
+                };
+                localStorage.setItem('gym_v8_progs', JSON.stringify(DB.progs));
+                localStorage.setItem('gym_v21_history', JSON.stringify(DB.history));
+                localStorage.setItem('gym_weight', JSON.stringify(DB.weight));
+                
+                alert("✅ Données restaurées avec succès !");
+                location.reload();
+            }
+        } else { 
+            alert("Ce texte/fichier n'est pas une sauvegarde valide."); 
+        }
+    } catch(err) { 
+        alert("Erreur : Le format des données est incorrect ou corrompu."); 
     }
 }
 
@@ -1008,7 +991,6 @@ window.addEventListener('beforeunload', () => { saveCurrentSessionState(); });
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveCurrentSessionState(); });
 
 // --- GESTION CLAVIER (Cacher Nav Bar) ---
-// Détecte quand on clique dans un champ (Focus) pour cacher la barre
 document.addEventListener('focusin', function(e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
         const nav = document.querySelector('.nav-bar');
@@ -1016,11 +998,9 @@ document.addEventListener('focusin', function(e) {
     }
 });
 
-// Détecte quand on quitte le champ (Blur) pour réafficher la barre
 document.addEventListener('focusout', function(e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
         const nav = document.querySelector('.nav-bar');
-        // Petit délai pour vérifier si on n'a pas juste cliqué sur l'input d'à côté
         setTimeout(() => {
             if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
                 if (nav) nav.classList.remove('keyboard-active');
