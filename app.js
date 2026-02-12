@@ -16,17 +16,25 @@ let historyMode = 'list';
 let historyState = { view: 'categories', selected: null };
 let currentProgramKey = ''; 
 
-// --- SCROLL DETECTION ---
+// --- SCROLL DETECTION (CORRIGÉ & ROBUSTE) ---
 let lastScrollTop = 0;
-const navBarElement = document.querySelector('.nav-bar');
 
 window.addEventListener('scroll', function() {
+    // On sélectionne la barre ICI pour être sûr qu'elle existe
+    const navBar = document.querySelector('.nav-bar');
+    if (!navBar) return; // Sécurité
+
     let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    // Petite zone tampon pour éviter que ça saute
     if (Math.abs(lastScrollTop - scrollTop) <= 5) return;
+    
+    // Si on descend ET qu'on n'est pas tout en haut
     if (scrollTop > lastScrollTop && scrollTop > 50) {
-        if(navBarElement) navBarElement.classList.add('scroll-hidden');
+        navBar.classList.add('scroll-hidden');
     } else {
-        if(navBarElement) navBarElement.classList.remove('scroll-hidden');
+        // Si on remonte, on réaffiche
+        navBar.classList.remove('scroll-hidden');
     }
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
 }, false);
@@ -40,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderHistory();
     renderCalendar();
     
-    // Initialiser la date du jour pour le poids
     const today = new Date().toISOString().split('T')[0];
     const dateInput = document.getElementById('weightDateInput');
     if(dateInput) dateInput.value = today;
@@ -60,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 chargerInterface(false);
                 
-                // RESTAURATION INTELLIGENTE (Drop Sets & Valeurs)
                 if (sessionState.inputs) {
                     const dropMap = {};
                     Object.keys(sessionState.inputs).forEach(key => {
@@ -106,7 +112,6 @@ function switchTab(viewName, btn, newIndex) {
     const newView = document.getElementById('view-' + viewName);
     newView.classList.remove('hidden');
     
-    // Animation simple
     const direction = newIndex > currentTabIndex ? 'anim-right' : 'anim-left';
     newView.classList.add(direction);
     
@@ -526,13 +531,13 @@ function startEditProgram(btn, e) { e.stopPropagation(); const name = btn.getAtt
 function deleteProg(name, e) { e.stopPropagation(); if(confirm("Supprimer ?")) { delete DB.progs[name]; localStorage.setItem('gym_v8_progs', JSON.stringify(DB.progs)); updateSelectMenu(); renderProgramList(); chargerInterface(); } }
 function updateSelectMenu() { const s = document.getElementById('selectProgram'); s.innerHTML = '<option value="" disabled selected>Choisir une Séance</option>'; Object.keys(DB.progs).forEach(k => s.innerHTML += `<option value="${k}">${k}</option>`); }
 
-// --- MODIF: VARIABLES DRAG & DROP PROGRAMMES ---
+// --- VARIABLES DRAG & DROP PROGRAMMES ---
 let progDragSrcIndex = -1;
 let progDragOverIndex = -1;
 let progLongPressTimer = null;
 let isProgDraggingMode = false;
 
-// --- MODIF: FONCTION RENDER PROGRAMMES AVEC DRAG & DROP ---
+// --- FONCTION RENDER PROGRAMMES AVEC DRAG & DROP ---
 function renderProgramList() { 
     const div = document.getElementById('listeMesProgrammes'); 
     div.innerHTML = ''; 
@@ -925,6 +930,7 @@ function drawWeightChart() {
 function exportData() {
     const dataStr = JSON.stringify(DB);
     
+    // Copie dans le presse-papier pour éviter le téléchargement de fichier qui crash
     navigator.clipboard.writeText(dataStr).then(function() {
         alert("✅ Sauvegarde COPIÉE !\n\nOuvre ton appli 'Notes' (ou Samsung Notes), crée une nouvelle note et fais 'Coller' pour conserver tes données.");
     }, function(err) {
@@ -1002,6 +1008,7 @@ document.addEventListener('focusout', function(e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
         const nav = document.querySelector('.nav-bar');
         setTimeout(() => {
+            // Vérifie si on a cliqué sur un autre input (ex: bouton 'Suivant' du clavier)
             if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
                 if (nav) nav.classList.remove('keyboard-active');
             }
