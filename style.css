@@ -212,7 +212,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 .btn-backup { background: var(--brand); color: white; width: 100%; padding: 12px; margin-bottom: 10px; font-size: 0.9rem; border-radius: 16px;}
 .btn-restore { background: #636e72; color: white; width: 100%; padding: 12px; font-size: 0.9rem; border-radius: 16px;}
 
-/* --- BARRE DE NAVIGATION (VERSION FINALE CORRIGÉE) --- */
+/* --- BARRE DE NAVIGATION (VERSION CORRIGÉE) --- */
 .nav-bar {
     position: fixed !important;
     bottom: 45px !important;
@@ -231,33 +231,29 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     justify-content: space-around !important;
     align-items: center !important;
     
-    /* Z-INDEX TRÈS ÉLEVÉ pour passer au-dessus de tout */
-    z-index: 9999 !important; 
+    z-index: 1000 !important;
+    padding-bottom: 0 !important;
+    pointer-events: auto !important; /* Indispensable pour cliquer */
     
-    /* FORCE LES BOUTONS À ÊTRE CLIQUABLES */
-    pointer-events: auto !important; 
-    
-    /* Transition fluide */
+    /* ICI : J'ai enlevé 'transform: none' et mis la transition */
     transition: transform 0.3s ease-in-out, opacity 0.3s ease !important;
 }
 
-/* La classe qui cache la barre vers le bas */
-.nav-bar.scroll-hidden { 
-    transform: translateY(150%) !important; 
+/* La classe qui cache la barre */
+.nav-bar.scroll-hidden {
+    transform: translateY(150%) !important;
     opacity: 0 !important;
-    pointer-events: none !important; /* Désactive les clics SEULEMENT quand caché */
+    pointer-events: none !important;
 }
 
-/* Style des boutons */
 .nav-item { 
     background: transparent; 
     color: #adb5bd; 
     font-size: 0.9rem; 
     font-weight: 700; 
     border: none;
-    pointer-events: auto !important; /* Sécurité supplémentaire */
+    pointer-events: auto !important;
 }
-
 .nav-item.active { 
     color: var(--text-main); 
     transform: scale(1.1); 
@@ -395,5 +391,6 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     pointer-events: none !important;
     transition: transform 0.1s ease-out !important;
 }
+
 
 
