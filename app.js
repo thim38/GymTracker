@@ -1,25 +1,3 @@
-// --- SCROLL DETECTION ---
-let lastScrollTop = 0;
-
-window.addEventListener('scroll', function() {
-    const navBar = document.querySelector('.nav-bar');
-    if (!navBar) return;
-
-    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
-    // Petite marge pour ne pas que ça saute au moindre mouvement
-    if (Math.abs(lastScrollTop - scrollTop) <= 5) return;
-    
-    // Si on descend (et qu'on n'est pas tout en haut) -> On cache
-    if (scrollTop > lastScrollTop && scrollTop > 50) {
-        navBar.classList.add('scroll-hidden');
-    } else {
-        // Si on remonte -> On affiche
-        navBar.classList.remove('scroll-hidden');
-    }
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
-}, false);
-
 // --- BASE DE DONNÉES ---
 let DB = {
     progs: JSON.parse(localStorage.getItem('gym_v8_progs')) || {},
@@ -1030,4 +1008,5 @@ document.addEventListener('focusout', function(e) {
         }, 100);
     }
 });
+
 
