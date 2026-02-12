@@ -280,11 +280,12 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 .builder-exo-name { display: block; font-weight: 800; font-size: 1rem; color: #2d3436; margin-bottom: 4px; }
 .builder-exo-info { display: block; font-size: 0.85rem; font-weight: 600; color: #636e72; }
 
-/* Style Superset */
+/* Style Superset (SANS la ligne grise à gauche) */
 .builder-item-superset {
-    border-left: 6px solid #ced4da;
-    background-color: #f8f9fa;
+    border-left: none !important; /* C'est cette ligne qui enlève le trait */
+    background-color: #f8f9fa;    /* On garde le fond gris clair pour que ça se distingue */
 }
 
 /* Sécurité pour cacher les anciens groupes de boutons s'ils traînent */
 .builder-actions-group { display: none !important; }
+
