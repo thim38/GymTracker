@@ -360,4 +360,25 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     background-color: #f8f9fa;
 }
 
+/* --- ANIMATION BARRE DE NAVIGATION (SCROLL) --- */
+.nav-bar {
+    /* Ajoute une transition fluide pour que ça ne saute pas */
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease !important;
+    z-index: 1000 !important;
+}
+
+/* La classe qui cache la barre vers le bas */
+.nav-bar.scroll-hidden {
+    transform: translateY(150%) !important; /* Descend de 150% de sa taille */
+    opacity: 0 !important;
+    pointer-events: none !important; /* Empêche de cliquer dessus quand elle est cachée */
+}
+
+/* La classe qui cache la barre quand le clavier est ouvert */
+.nav-bar.keyboard-active {
+    transform: translateY(200%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: transform 0.1s ease-out !important;
+}
 
