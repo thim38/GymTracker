@@ -384,7 +384,7 @@ let dragOverIndex = -1;
 let longPressTimer = null;
 let isDraggingMode = false;
 
-// --- FONCTION RENDER BUILDER AVEC DRAG & DROP ---
+// --- FONCTION RENDER BUILDER (VERSION STABLE) ---
 function renderBuilder() { 
     const listDiv = document.getElementById('builderListDisplay'); 
     listDiv.innerHTML = ''; 
@@ -392,10 +392,18 @@ function renderBuilder() {
     for (let i = 0; i < tempBuilderList.length; i++) { 
         const item = tempBuilderList[i]; 
         let editingClass = ''; 
-        if (currentEditingIndex !== -1 && (i === currentEditingIndex || (item.isSuperset && i === currentEditingIndex + 1))) editingClass = 'editing-active';
+        
+        // --- CORRECTION ICI : SIMPLIFICATION TOTALE ---
+        // On allume la case SI ET SEULEMENT SI c'est celle qu'on édite.
+        // Plus de calcul savant avec "l'exercice suivant", ça évite tous les bugs.
+        if (currentEditingIndex !== -1 && i === currentEditingIndex) {
+            editingClass = 'editing-active';
+        }
         
         let htmlContent = '';
+        // Détection d'un début de Superset (Item actuel + Item suivant sont des supersets)
         let isSupersetStart = (item.isSuperset && tempBuilderList[i+1] && tempBuilderList[i+1].isSuperset);
+        // Détection du deuxième élément (pour ne pas l'afficher en double)
         let isSupersetSecond = (item.isSuperset && tempBuilderList[i-1] && tempBuilderList[i-1].isSuperset);
 
         let draggableAttr = isSupersetSecond ? '' : 'data-draggable="true"';
@@ -413,7 +421,7 @@ function renderBuilder() {
                     <div> <span class="builder-exo-name">${nextItem.name}</span> <span class="builder-exo-info">${nextItem.sets} x ${nextItem.reps} reps</span> </div>
                 </div>
             </div>`; 
-            i++; 
+            i++; // On saute l'exercice suivant car il est inclus dans la boîte
         } else if (!isSupersetSecond) { 
             const dataJson = JSON.stringify({ type: 'solo', data: item });
             htmlContent = `
@@ -427,15 +435,14 @@ function renderBuilder() {
         } 
         listDiv.innerHTML += htmlContent;
     } 
-
+    
+    // --- GESTION TACTILE DRAG & DROP (Rien ne change ici) ---
     const items = listDiv.querySelectorAll('.builder-item[data-draggable="true"]');
     items.forEach(el => {
         el.addEventListener('touchstart', (e) => {
             if (e.target.classList.contains('delete-x')) return; 
-            
             dragSrcIndex = parseInt(el.getAttribute('data-index'));
             isDraggingMode = false; 
-
             longPressTimer = setTimeout(() => {
                 isDraggingMode = true;
                 el.classList.add('dragging-active');
@@ -444,17 +451,12 @@ function renderBuilder() {
         }, { passive: false });
 
         el.addEventListener('touchmove', (e) => {
-            if (!isDraggingMode) {
-                clearTimeout(longPressTimer);
-                return;
-            }
+            if (!isDraggingMode) { clearTimeout(longPressTimer); return; }
             e.preventDefault(); 
             const touch = e.touches[0];
             const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
             const closestItem = targetEl ? targetEl.closest('.builder-item') : null;
-
             document.querySelectorAll('.drag-over').forEach(i => i.classList.remove('drag-over'));
-
             if (closestItem && closestItem !== el) {
                 closestItem.classList.add('drag-over');
                 dragOverIndex = parseInt(closestItem.getAttribute('data-index'));
@@ -465,7 +467,6 @@ function renderBuilder() {
             clearTimeout(longPressTimer);
             el.classList.remove('dragging-active');
             document.querySelectorAll('.drag-over').forEach(i => i.classList.remove('drag-over'));
-
             if (isDraggingMode && dragOverIndex !== -1 && dragSrcIndex !== -1 && dragSrcIndex !== dragOverIndex) {
                 handleDropLogic(dragSrcIndex, dragOverIndex);
             }
@@ -1028,4 +1029,5 @@ document.addEventListener('click', function(e) {
         nav.classList.remove('keyboard-active');
     }
 });
+
 
