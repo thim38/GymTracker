@@ -58,27 +58,54 @@ h1 { text-align: center; margin-bottom: 30px; font-weight: 900; text-transform: 
 /* --- VIEW POIDS --- */
 .weight-input-area { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
 
-/* DATE AJUSTÉE (CORRIGÉE : Largeur "Slim" pour éviter le vide à droite) */
+/* --- DATE SUIVI POIDS : SUPPRESSION TOTALE DE L'ESPACE ICÔNE --- */
+
 .date-input-styled {
+    /* 1. On désactive le design natif du téléphone qui réserve de la place */
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    
     border: none;
     background: #fff;
     
-    /* Marges intérieures réduites au minimum pour gagner de la place */
-    padding: 14px 2px; 
+    /* 2. Zéro marge sur les côtés, tout l'espace est pour le texte */
+    padding: 14px 0 !important; 
     
     border-radius: 16px;
     font-family: inherit;
     color: var(--text-gray);
     box-shadow: var(--shadow);
     
-    /* C'est ici qu'on règle le problème : 115px suffit pile pour une date */
-    width: 115px !important; 
+    /* 3. Largeur pile pour la date (JJ/MM/AAAA) */
+    width: 120px !important; 
     
-    /* On force le texte bien au milieu */
+    /* 4. Force le texte au milieu */
     text-align: center !important;
     
-    appearance: none;
     font-size: 0.95rem;
+    display: block; /* Aide au centrage sur certains mobiles */
+}
+
+/* Fix spécifique pour centrer le texte sur iOS/iPhone si besoin */
+.date-input-styled::-webkit-date-and-time-value {
+    text-align: center !important; 
+}
+
+/* LA SOLUTION RADICALE POUR L'ICÔNE */
+.date-input-styled::-webkit-calendar-picker-indicator {
+    /* On la cache */
+    display: none !important;
+    
+    /* ET on réduit sa taille réelle à 0 pour qu'elle ne pousse rien */
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    
+    /* On la sort du flux pour être sûr */
+    position: absolute !important;
+    right: 0 !important;
+    opacity: 0 !important;
 }
 
 .btn-add-weight { background: var(--brand); color: white; border: none; border-radius: 16px; width: 50px; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(45, 52, 54, 0.2); }
@@ -381,6 +408,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     pointer-events: none !important;
     transition: transform 0.1s ease-out !important;
 }
+
 
 
 
