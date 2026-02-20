@@ -58,52 +58,41 @@ h1 { text-align: center; margin-bottom: 30px; font-weight: 900; text-transform: 
 /* --- VIEW POIDS --- */
 .weight-input-area { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
 
-/* --- DATE SUIVI POIDS (NOUVELLE VERSION STABLE) --- */
+/* --- DATE SUIVI POIDS (VERSION FINALE ÉPURÉE) --- */
+
 .date-input-styled {
-    /* Ces deux lignes disent au PC d'oublier son design par défaut */
-    -webkit-appearance: none; 
-    appearance: none;
-    
     background: #fff;
     border: none;
     border-radius: 16px;
     color: var(--text-gray);
     box-shadow: var(--shadow);
     
-    width: 120px; /* On reste sur 120px, c'est la bonne taille */
-    height: 48px; 
+    /* Taille de la case */
+    width: 120px; 
+    height: 48px;
+    padding: 0; /* Aucun padding qui pourrait écraser le texte */
     
     font-family: inherit;
     font-size: 0.95rem;
     font-weight: 700;
     text-align: center;
     
-    position: relative; 
+    position: relative; /* Pour l'icône */
+    cursor: pointer;
 }
 
-/* On étire l'icône invisible pour pouvoir cliquer partout */
+/* L'icône est étirée sur toute la case et invisible à 100% */
 .date-input-styled::-webkit-calendar-picker-indicator {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    width: auto;
-    height: auto;
+    width: 100%;
+    height: 100%;
     opacity: 0;
     cursor: pointer;
     margin: 0;
     padding: 0;
-}
-
-/* On force le conteneur du texte à ignorer l'espace fantôme et à prendre 100% de la place */
-.date-input-styled::-webkit-datetime-edit {
-    text-align: center;
-    line-height: 48px; 
-    margin: 0;
-    padding: 0;
-    width: 100%; /* LA VRAIE SOLUTION EST ICI */
-    display: block;
+    background: transparent;
 }
 
 .btn-add-weight { background: var(--brand); color: white; border: none; border-radius: 16px; width: 50px; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(45, 52, 54, 0.2); }
@@ -443,6 +432,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 #zoneTravail .superset-wrapper {
     background-color: #ffffff !important;
 }
+
 
 
 
