@@ -440,6 +440,11 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     color: white; 
 }
 
+/* --- FORCE LE FOND BLANC UNIQUEMENT POUR LES SUPERSETS DANS "MA SÉANCE" --- */
+#zoneTravail .card.superset-container,
+#zoneTravail .superset-wrapper {
+    background-color: #ffffff !important;
+}
 
 
 
