@@ -351,7 +351,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 /* Style Superset (Alignement corrigé) */
 .builder-item-superset {
     /* On garde la même logique de bordure que les autres pour l'alignement */
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     /* Si tu veux différencier, tu peux changer la couleur de fond, mais ne touche pas aux bordures/marges */
 }
 
@@ -439,6 +439,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     background: #4b5563; /* Le gris foncé exact de l'autre bouton */
     color: white; 
 }
+
 
 
 
