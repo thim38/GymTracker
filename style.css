@@ -58,70 +58,55 @@ h1 { text-align: center; margin-bottom: 30px; font-weight: 900; text-transform: 
 /* --- VIEW POIDS --- */
 .weight-input-area { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
 
-/* --- DATE SUIVI POIDS : SUPPRESSION TOTALE DE L'ESPACE ICÔNE --- */
+/* --- DATE SUIVI POIDS : CENTRAGE ABSOLU (SHADOW DOM) --- */
 
 .date-input-styled {
-    /* 1. On désactive le design natif du téléphone qui réserve de la place */
     -webkit-appearance: none !important;
     appearance: none !important;
-    
     border: none;
     background: #fff;
-    
-    /* 2. Zéro marge sur les côtés, tout l'espace est pour le texte */
-    padding: 14px 0 !important; 
-    
+    padding: 14px 0 !important;
     border-radius: 16px;
     font-family: inherit;
     color: var(--text-gray);
     box-shadow: var(--shadow);
-    
-    /* 3. Largeur pile pour la date (JJ/MM/AAAA) */
-    width: 120px !important; 
-    
-    /* 4. Force le texte au milieu */
+    width: 120px !important;
     text-align: center !important;
-    
     font-size: 0.95rem;
-    display: block; /* Aide au centrage sur certains mobiles */
+    display: block;
 }
 
-/* Fix spécifique pour centrer le texte sur iOS/iPhone si besoin */
+/* 1. LA MAGIE EST ICI : On force les "sous-boîtes" invisibles du téléphone à prendre toute la largeur et à se centrer */
+.date-input-styled::-webkit-datetime-edit,
+.date-input-styled::-webkit-datetime-edit-fields-wrapper {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* 2. On cible le texte lui-même sur iOS */
 .date-input-styled::-webkit-date-and-time-value {
     text-align: center !important; 
 }
 
-/* LA SOLUTION RADICALE POUR L'ICÔNE */
-.date-input-styled::-webkit-calendar-picker-indicator {
-    /* On la cache */
+/* 3. On détruit définitivement l'icône calendrier ET les boutons "effacer" cachés */
+.date-input-styled::-webkit-calendar-picker-indicator,
+.date-input-styled::-webkit-clear-button,
+.date-input-styled::-webkit-inner-spin-button {
     display: none !important;
-    
-    /* ET on réduit sa taille réelle à 0 pour qu'elle ne pousse rien */
+    -webkit-appearance: none !important;
     width: 0 !important;
     height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
-    
-    /* On la sort du flux pour être sûr */
     position: absolute !important;
     right: 0 !important;
     opacity: 0 !important;
+    pointer-events: none !important;
 }
-
-.btn-add-weight { background: var(--brand); color: white; border: none; border-radius: 16px; width: 50px; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(45, 52, 54, 0.2); }
-.btn-add-weight:active { transform: scale(0.95); }
-.chart-container { background: #fff; border-radius: 24px; padding: 15px; box-shadow: var(--shadow); height: 250px; position: relative; width: 100%; margin-bottom: 20px; }
-canvas { width: 100%; height: 100%; display: block; }
-.weight-item { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px; border-radius: 16px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); animation: fadeInUp 0.3s ease backwards; }
-.weight-date { font-weight: 600; color: #b2bec3; font-size: 0.9rem; }
-.weight-val { font-weight: 800; color: var(--text-main); font-size: 1.1rem; }
-.btn-del-weight {
-    background: #f1f3f5; color: #2d3436; border: 1px solid #e9ecef;
-    width: 30px; height: 30px; border-radius: 50%; margin-left: 10px;
-    font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    font-size: 14px; transition: transform 0.1s;
-}
-.btn-del-weight:active { transform: scale(0.9); background: #e9ecef; }
 
 /* --- INPUTS & SELECTS --- */
 select { width: 100%; padding: 16px; border-radius: 16px; border: 1px solid transparent; background: #fff; font-size: 1rem; margin-bottom: 25px; font-weight: 700; outline: none; text-align: center; text-align-last: center; box-shadow: var(--shadow); -webkit-appearance: none; appearance: none; cursor: pointer; transition: transform 0.1s; }
@@ -441,6 +426,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     background: #4b5563; /* Le gris foncé exact de l'autre bouton */
     color: white; 
 }
+
 
 
 
