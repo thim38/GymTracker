@@ -60,24 +60,28 @@ h1 { text-align: center; margin-bottom: 30px; font-weight: 900; text-transform: 
 
 /* --- DATE SUIVI POIDS (NOUVELLE VERSION STABLE) --- */
 .date-input-styled {
+    /* Ces deux lignes disent au PC d'oublier son design par défaut */
+    -webkit-appearance: none; 
+    appearance: none;
+    
     background: #fff;
     border: none;
     border-radius: 16px;
     color: var(--text-gray);
     box-shadow: var(--shadow);
     
-    width: 120px; 
-    height: 48px; /* Hauteur fixe pour s'aligner avec le bouton + */
+    width: 120px; /* On reste sur 120px, c'est la bonne taille */
+    height: 48px; 
     
     font-family: inherit;
     font-size: 0.95rem;
     font-weight: 700;
     text-align: center;
     
-    position: relative; /* Indispensable pour l'astuce de l'icône */
+    position: relative; 
 }
 
-/* ASTUCE : On sort l'icône de l'alignement, on l'étire sur toute la case et on la rend transparente. */
+/* On étire l'icône invisible pour pouvoir cliquer partout */
 .date-input-styled::-webkit-calendar-picker-indicator {
     position: absolute;
     top: 0;
@@ -92,12 +96,14 @@ h1 { text-align: center; margin-bottom: 30px; font-weight: 900; text-transform: 
     padding: 0;
 }
 
-/* On s'assure que le texte de la date se centre parfaitement */
+/* On force le conteneur du texte à ignorer l'espace fantôme et à prendre 100% de la place */
 .date-input-styled::-webkit-datetime-edit {
     text-align: center;
-    line-height: 48px; /* Aligne le texte au milieu verticalement */
+    line-height: 48px; 
     margin: 0;
     padding: 0;
+    width: 100%; /* LA VRAIE SOLUTION EST ICI */
+    display: block;
 }
 
 .btn-add-weight { background: var(--brand); color: white; border: none; border-radius: 16px; width: 50px; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(45, 52, 54, 0.2); }
@@ -437,6 +443,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 #zoneTravail .superset-wrapper {
     background-color: #ffffff !important;
 }
+
 
 
 
