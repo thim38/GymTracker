@@ -409,6 +409,21 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     transition: transform 0.1s ease-out !important;
 }
 
+/* --- BOUTONS HISTORIQUE (Modifier / Supprimer) --- */
+.hist-actions { display: flex; gap: 8px; }
+.btn-hist-mini { 
+    padding: 6px 12px; 
+    font-size: 0.8rem; 
+    border-radius: 12px; 
+    border: none; 
+    font-weight: 700; 
+    cursor: pointer; 
+}
+.btn-hist-mini:active { transform: scale(0.9); }
+.btn-hist-edit { background: #e9ecef; color: #2d3436; }
+.btn-hist-del { background: #ff7675; color: white; }
+
+
 
 
 
