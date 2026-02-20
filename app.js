@@ -246,7 +246,7 @@ function renderSuperset(container, exoA, idxA, exoB, idxB, progName) {
     const safeProgName = progName.replace(/'/g, "\\'"); 
     const safeExoNameA = exoA.name.replace(/'/g, "\\'"); 
     const safeExoNameB = exoB.name.replace(/'/g, "\\'");
-    let html = `<div class="card superset-container" style="animation-delay: ${idxA * 0.1}s; background-color: transparent !important; box-shadow: none !important;"><span class="superset-label">Superset</span>`;
+    let html = `<div class="card superset-container" style="animation-delay: ${idxA * 0.1}s;"><span class="superset-label">Superset</span>`;
     html += `<div class="card-header" style="border:none; padding-bottom:5px; margin-bottom:5px;"><div class="header-top"><span class="exo-title">A. ${exoA.name}</span> <span class="exo-badge">Fourchette de reps : ${exoA.reps}</span></div></div>`;
     html += `<div class="card-header"><div class="header-top"><span class="exo-title">B. ${exoB.name}</span> <span class="exo-badge">Fourchette de reps : ${exoB.reps}</span></div></div>`;
     html += `<div id="sets_super_${idxA}">`; 
@@ -1136,6 +1136,7 @@ function modifierSessionHistory(id, event) {
     saveCurrentSessionState();
     alert("Séance rechargée ! Corrige tes poids, valide tes exercices, et clique sur 'Terminer la séance' pour l'enregistrer à nouveau.");
 }
+
 
 
 
