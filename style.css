@@ -58,54 +58,46 @@ h1 { text-align: center; margin-bottom: 30px; font-weight: 900; text-transform: 
 /* --- VIEW POIDS --- */
 .weight-input-area { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
 
-/* --- DATE SUIVI POIDS : SUPPRESSION TOTALE DE L'ESPACE ICÔNE --- */
-
+/* --- DATE SUIVI POIDS (NOUVELLE VERSION STABLE) --- */
 .date-input-styled {
-    /* 1. On désactive le design natif du téléphone qui réserve de la place */
-    -webkit-appearance: none !important;
-    appearance: none !important;
-    
-    border: none;
     background: #fff;
-    
-    /* 2. Zéro marge sur les côtés, tout l'espace est pour le texte */
-    padding: 14px 0 !important; 
-    
+    border: none;
     border-radius: 16px;
-    font-family: inherit;
     color: var(--text-gray);
     box-shadow: var(--shadow);
     
-    /* 3. Largeur pile pour la date (JJ/MM/AAAA) */
-    width: 120px !important; 
+    width: 120px; 
+    height: 48px; /* Hauteur fixe pour s'aligner avec le bouton + */
     
-    /* 4. Force le texte au milieu */
-    text-align: center !important;
-    
+    font-family: inherit;
     font-size: 0.95rem;
-    display: block; /* Aide au centrage sur certains mobiles */
+    font-weight: 700;
+    text-align: center;
+    
+    position: relative; /* Indispensable pour l'astuce de l'icône */
 }
 
-/* Fix spécifique pour centrer le texte sur iOS/iPhone si besoin */
-.date-input-styled::-webkit-date-and-time-value {
-    text-align: center !important; 
-}
-
-/* LA SOLUTION RADICALE POUR L'ICÔNE */
+/* ASTUCE : On sort l'icône de l'alignement, on l'étire sur toute la case et on la rend transparente. */
 .date-input-styled::-webkit-calendar-picker-indicator {
-    /* On la cache */
-    display: none !important;
-    
-    /* ET on réduit sa taille réelle à 0 pour qu'elle ne pousse rien */
-    width: 0 !important;
-    height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    
-    /* On la sort du flux pour être sûr */
-    position: absolute !important;
-    right: 0 !important;
-    opacity: 0 !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+}
+
+/* On s'assure que le texte de la date se centre parfaitement */
+.date-input-styled::-webkit-datetime-edit {
+    text-align: center;
+    line-height: 48px; /* Aligne le texte au milieu verticalement */
+    margin: 0;
+    padding: 0;
 }
 
 .btn-add-weight { background: var(--brand); color: white; border: none; border-radius: 16px; width: 50px; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(45, 52, 54, 0.2); }
@@ -445,6 +437,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 #zoneTravail .superset-wrapper {
     background-color: #ffffff !important;
 }
+
 
 
 
