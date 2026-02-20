@@ -409,16 +409,28 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
     transition: transform 0.1s ease-out !important;
 }
 
-/* --- BOUTONS HISTORIQUE (Modifier / Supprimer) --- */
+/* --- BOUTONS HISTORIQUE (Couleurs harmonisées) --- */
 .hist-actions { display: flex; gap: 8px; }
 .btn-hist-mini { 
     padding: 6px 12px; 
     font-size: 0.8rem; 
-    border-radius: 12px; 
+    border-radius: 12px; /* Un peu plus arrondi pour matcher l'autre style */
     border: none; 
     font-weight: 700; 
-    cursor: pointer; 
+    cursor: pointer;
+    transition: transform 0.1s ease-in-out; /* Ajout d'une petite transition fluide */
 }
-.btn-hist-mini:active { transform: scale(0.9); }
-.btn-hist-edit { background: #e9ecef; color: #2d3436; }
-.btn-hist-del { background: #ff7675; color: white; }
+.btn-hist-mini:active { transform: scale(0.95); }
+
+/* Bouton MODIFIER : Fond blanc avec bordure grise légère, texte foncé */
+.btn-hist-edit { 
+    background: #fff; 
+    color: var(--text-main); 
+    border: 1px solid #e9ecef; /* La petite bordure grise */
+}
+
+/* Bouton SUPPRIMER : Fond gris foncé, texte blanc */
+.btn-hist-del { 
+    background: #4b5563; /* Le gris foncé exact de l'autre bouton */
+    color: white; 
+}
