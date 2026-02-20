@@ -202,7 +202,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 .prog-details-box { padding: 20px; background: #fff; margin-bottom: 20px; border-radius: 24px; box-shadow: var(--shadow); display: none; }
 .prog-details-box.open { display: block; animation: fadeInUp 0.3s ease-out; }
 .exo-wrapper { background: #fff; border: 1px solid var(--border-light); border-radius: 16px; overflow: hidden; margin-bottom: 12px; box-shadow: var(--shadow); }
-.superset-wrapper { background: #f8f9fa; border: 1px solid var(--border-light); border-radius: 16px; overflow: hidden; margin-bottom: 12px; box-shadow: var(--shadow); }
+.superset-wrapper { background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; overflow: hidden; margin-bottom: 12px; box-shadow: var(--shadow); }
 .prog-line { display: flex; justify-content: space-between; align-items: center; padding: 16px 15px; border-left: none; background: transparent; }
 .prog-line-superset { border-bottom: 1px dashed #e9ecef; padding-bottom: 8px; }
 .prog-line-superset-b { border-bottom: none; padding-top: 8px; padding-bottom: 16px; }
@@ -351,7 +351,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 /* Style Superset (Alignement corrigé) */
 .builder-item-superset {
     /* On garde la même logique de bordure que les autres pour l'alignement */
-    background-color: #ffffff;
+    background-color: #f8f9fa;
     /* Si tu veux différencier, tu peux changer la couleur de fond, mais ne touche pas aux bordures/marges */
 }
 
@@ -445,6 +445,7 @@ button { border: none; font-weight: 700; border-radius: 16px; position: relative
 #zoneTravail .superset-wrapper {
     background-color: #ffffff !important;
 }
+
 
 
 
