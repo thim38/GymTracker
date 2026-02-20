@@ -1069,6 +1069,74 @@ document.addEventListener('click', function(e) {
     }
 });
 
+// --- GESTION DES SÉANCES (MODIFIER / SUPPRIMER) ---
+function supprimerSessionHistory(id, event) {
+    event.stopPropagation(); // Empêche d'ouvrir la boîte en cliquant sur le bouton
+    if(confirm("Supprimer définitivement cette séance ?")) {
+        DB.history = DB.history.filter(s => s.id !== id);
+        localStorage.setItem('gym_v21_history', JSON.stringify(DB.history));
+        renderHistory();
+    }
+}
+
+function modifierSessionHistory(id, event) {
+    event.stopPropagation();
+    const sessionIdx = DB.history.findIndex(s => s.id === id);
+    if (sessionIdx === -1) return;
+    const sessionToEdit = DB.history[sessionIdx];
+
+    if(hasSessionData() && !confirm("Attention : tu as une séance en cours. L'écraser pour modifier cette ancienne séance ?")) return;
+    if(!confirm("Cette séance va être retirée de l'historique et remise en cours pour que tu puisses la modifier. Continuer ?")) return;
+
+    // 1. On la retire de l'historique
+    DB.history.splice(sessionIdx, 1);
+    localStorage.setItem('gym_v21_history', JSON.stringify(DB.history));
+
+    // 2. On bascule sur l'onglet "Ma Séance"
+    const seanceBtn = document.querySelectorAll('.nav-item')[0];
+    switchTab('seance', seanceBtn, 0);
+
+    // 3. On prépare l'interface avec le bon programme
+    document.getElementById('selectProgram').value = sessionToEdit.programName;
+    window.editingHistoryDate = sessionToEdit.date; // On sauvegarde la date !
+    chargerInterface(true); 
+
+    // 4. On remplit automatiquement les cases avec les anciens poids
+    sessionToEdit.details.forEach(log => {
+        const progExos = DB.progs[sessionToEdit.programName];
+        if(!progExos) return;
+        let exoIdx = progExos.findIndex(e => e.name === log.exo);
+        if(exoIdx === -1) return;
+
+        const s = log.serie;
+        const parts = log.perf.split(' + ');
+
+        // Remplir la série principale
+        const mainMatch = parts[0].match(/([\d.]+) kg x (\d+) reps/);
+        if(mainMatch) {
+            const pInp = document.getElementById(`p_${exoIdx}_${s}`);
+            const rInp = document.getElementById(`r_${exoIdx}_${s}`);
+            if(pInp) pInp.value = mainMatch[1];
+            if(rInp) rInp.value = mainMatch[2];
+        }
+
+        // Remplir les dégressives (Dropsets)
+        for(let d=1; d<parts.length; d++) {
+            const dropMatch = parts[d].match(/([\d.]+) kg x (\d+) reps/);
+            if(dropMatch) {
+                ajouterDegressive(`${exoIdx}_${s}`, log.exo, sessionToEdit.programName, s, true);
+                const wInp = document.getElementById(`drop_w_${exoIdx}_${s}_${d-1}`);
+                const rInp = document.getElementById(`drop_r_${exoIdx}_${s}_${d-1}`);
+                if(wInp) wInp.value = dropMatch[1];
+                if(rInp) rInp.value = dropMatch[2];
+            }
+        }
+    });
+
+    saveCurrentSessionState();
+    alert("Séance rechargée ! Corrige tes poids, valide tes exercices, et clique sur 'Terminer la séance' pour l'enregistrer à nouveau.");
+}
+
 
 
 
