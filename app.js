@@ -352,7 +352,15 @@ function validerSuperset(nomA, idxA, nomB, idxB, totalSets, btn) {
 function terminerLaSeance(progName) { 
     if(currentSessionLogs.length === 0) return alert("Tu n'as rien validé !"); 
     if(confirm("Confirmer la fin de la séance ?")) { 
-        const sessionObject = { id: Date.now(), date: new Date().toLocaleDateString(), programName: progName, details: currentSessionLogs }; 
+        
+        // --- NOUVEAU : On garde la date d'origine si on modifiait une séance ---
+        let finalDate = new Date().toLocaleDateString();
+        if (window.editingHistoryDate) {
+            finalDate = window.editingHistoryDate;
+            window.editingHistoryDate = null; // On réinitialise
+        }
+
+        const sessionObject = { id: Date.now(), date: finalDate, programName: progName, details: currentSessionLogs }; 
         DB.history.unshift(sessionObject); 
         localStorage.setItem('gym_v21_history', JSON.stringify(DB.history)); 
         localStorage.removeItem('gym_active_session');
@@ -722,7 +730,15 @@ function renderHistory() {
         const filtered = DB.history.filter(s => s.programName === historyState.selected); 
         filtered.forEach(session => { 
             const wrapper = document.createElement('div'); wrapper.className = 'hist-session'; 
-            const header = document.createElement('div'); header.className = 'hist-header'; header.innerHTML = `<span class="hist-date-large">${session.date}</span>`; 
+            const header = document.createElement('div'); header.className = 'hist-header';
+            // --- NOUVEAU : On ajoute les boutons Modifier et Supprimer ---
+        header.innerHTML = `
+            <span class="hist-date-large">${session.date}</span>
+            <div class="hist-actions">
+                <button class="btn-hist-mini btn-hist-edit" onclick="modifierSessionHistory(${session.id}, event)">Modifier</button>
+                <button class="btn-hist-mini btn-hist-del" onclick="supprimerSessionHistory(${session.id}, event)">Supprimer</button>
+            </div>
+        `;
             const body = document.createElement('div'); body.className = 'hist-body'; 
             if(session.details && session.details.length > 0) { session.details.forEach(log => { let cleanPerf = log.perf.replace(/ \+ Dégressive: /g, " + ").replace(/Dégressive: /g, "+ "); body.innerHTML += `<div class="hist-exo-line"><span class="hist-exo-name">${log.exo} <small style="color:#b2bec3;">(#${log.serie})</small></span><span class="hist-exo-perf">${cleanPerf}</span></div>`; }); } else { body.innerHTML = '<div style="padding:10px; color:#999">Pas de détails.</div>'; } 
             header.onclick = () => { body.classList.toggle('open'); }; wrapper.appendChild(header); wrapper.appendChild(body); container.appendChild(wrapper); 
@@ -1052,6 +1068,7 @@ document.addEventListener('click', function(e) {
         nav.classList.remove('keyboard-active');
     }
 });
+
 
 
 
