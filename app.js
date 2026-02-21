@@ -843,9 +843,9 @@ function renderWeightList() {
         listDiv.innerHTML += `
             <div class="weight-item">
                 <span class="weight-date">${dateStr}</span>
-                <div style="display:flex; align-items:center;">
+                <div style="display:flex; align-items:center; gap: 10px;">
                     <span class="weight-val">${item.value} kg</span>
-                    <button class="btn-del-weight" onclick="deleteWeight(${realIndex})">✖</button>
+                    <button class="btn-hist-mini btn-hist-del" onclick="deleteWeight(${realIndex})">Supprimer</button>
                 </div>
             </div>
         `;
@@ -1137,6 +1137,7 @@ function modifierSessionHistory(id, event) {
     saveCurrentSessionState();
     alert("Séance rechargée ! Corrige tes poids, valide tes exercices, et clique sur 'Terminer la séance' pour l'enregistrer à nouveau.");
 }
+
 
 
 
