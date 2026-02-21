@@ -25,10 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     renderHistory();
     renderCalendar();
     
-    // Initialiser la date du jour pour le poids
-    const today = new Date().toISOString().split('T')[0];
-    const dateInput = document.getElementById('weightDateInput');
-    if(dateInput) dateInput.value = today;
+    // Initialiser l'affichage de la date du jour pour le poids (Texte fixe)
+    const dateDisplay = document.getElementById('weightDateDisplay');
+    if(dateDisplay) {
+        dateDisplay.innerText = new Date().toLocaleDateString('fr-FR'); // Affiche "21/02/2026"
+    }
 
     if (savedSession) {
         try {
@@ -800,15 +801,15 @@ function renderWeightView() {
 }
 
 function addWeightEntry() {
-    const dateInput = document.getElementById('weightDateInput');
     const valInput = document.getElementById('weightValueInput');
-    const dateVal = dateInput.value;
     const weightVal = parseFloat(valInput.value);
     
-    if(!dateVal || isNaN(weightVal)) return alert("Date ou poids invalide");
+    // On génère la date du jour automatiquement au format standard (AAAA-MM-JJ)
+    const dateVal = new Date().toISOString().split('T')[0];
+    
+    if(isNaN(weightVal)) return alert("Poids invalide");
     
     DB.weight.push({ date: dateVal, value: weightVal });
-    
     DB.weight.sort((a,b) => new Date(a.date) - new Date(b.date));
     
     localStorage.setItem('gym_weight', JSON.stringify(DB.weight));
@@ -1136,6 +1137,7 @@ function modifierSessionHistory(id, event) {
     saveCurrentSessionState();
     alert("Séance rechargée ! Corrige tes poids, valide tes exercices, et clique sur 'Terminer la séance' pour l'enregistrer à nouveau.");
 }
+
 
 
 
