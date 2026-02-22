@@ -958,18 +958,55 @@ function exportData() {
     });
 }
 
-// --- IMPORTATION DIRECTE PAR COLLER ---
+// --- IMPORTATION DIRECTE PAR TEXTAREA (SANS LIMITE) ---
 function triggerImport() {
-    // On attend un tout petit peu pour laisser le temps au menu de se fermer
-    setTimeout(() => {
-        const text = prompt("Colle le texte de ta sauvegarde ici :");
-        if (text && text.trim() !== "") {
-            processImport(text);
-        }
-    }, 100);
+    // On ferme les paramètres et on ouvre la nouvelle fenêtre d'import
+    toggleSettings(); 
+    const modal = document.getElementById('importModal');
+    if(modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('importTextarea').value = ''; // On vide la case
+    }
 }
 
-// Tu peux SUPPRIMER complètement la fonction : function importData(input) { ... }
+function closeImportModal() {
+    document.getElementById('importModal').classList.add('hidden');
+}
+
+function confirmImport() {
+    const text = document.getElementById('importTextarea').value;
+    if (text && text.trim() !== "") {
+        closeImportModal();
+        processImport(text);
+    } else {
+        alert("La zone de texte est vide !");
+    }
+}
+
+function processImport(jsonString) {
+    try {
+        const data = JSON.parse(jsonString);
+        if (data.progs || data.history) {
+            if(confirm("Attention : Cela va remplacer TOUTES tes données actuelles par cette sauvegarde.\n\nContinuer ?")) {
+                DB = {
+                    progs: data.progs || {},
+                    history: data.history || [],
+                    weight: data.weight || [] 
+                };
+                localStorage.setItem('gym_v8_progs', JSON.stringify(DB.progs));
+                localStorage.setItem('gym_v21_history', JSON.stringify(DB.history));
+                localStorage.setItem('gym_weight', JSON.stringify(DB.weight));
+                
+                alert("Données restaurées avec succès !");
+                location.reload();
+            }
+        } else { 
+            alert("Ce texte/fichier n'est pas une sauvegarde valide."); 
+        }
+    } catch(err) { 
+        alert("Erreur : Le format des données est incorrect ou la sauvegarde a été mal copiée."); 
+    }
+}
 
 function processImport(jsonString) {
     try {
@@ -1137,6 +1174,7 @@ function modifierSessionHistory(id, event) {
     saveCurrentSessionState();
     alert("Séance rechargée ! Corrige tes poids, valide tes exercices, et clique sur 'Terminer la séance' pour l'enregistrer à nouveau.");
 }
+
 
 
 
