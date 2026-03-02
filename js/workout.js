@@ -133,7 +133,11 @@ function renderNormal(container, exo, idx, progName) {
     let html = `<div class="card" style="animation-delay: ${idx * 0.1}s"><div class="card-header"><div class="header-top"><span class="exo-title">${exo.name}</span><span class="exo-badge">Fourchette de reps : ${exo.reps}</span></div></div><div id="sets_${idx}">`;
     for (let s = 1; s <= exo.sets; s++) {
         const data = getSplitPerf(exo.name, s, progName, idx);
-        const mainPerfHTML = (data && data.main) ? `<span class="last-perf">Précédent : ${data.main}</span>` : '';
+        let mainPerfHTML = '';
+        if (data && data.main) {
+            let dropPart = data.drop ? `<span id="hint_drop_${idx}_${s}"> + ${data.drop}</span>` : '';
+            mainPerfHTML = `<span class="last-perf">Précédent : ${data.main}${dropPart}</span>`;
+        }
         const safeExoName = exo.name.replace(/'/g, "\\'");
         const safeProgName = progName.replace(/'/g, "\\'");
         html += `<div class="serie-container" id="container_${idx}_${s}"><div class="input-row"><div class="set-col"><div class="set-num">#${s}</div><button class="btn-mini-add" onclick="ajouterDegressive('${idx}_${s}', '${safeExoName}', '${safeProgName}', ${s})">+</button></div>${createInputWithUnit(`p_${idx}_${s}`, 'kg')}${createInputWithUnit(`r_${idx}_${s}`, 'reps')}</div>${mainPerfHTML}</div>`;
@@ -155,12 +159,20 @@ function renderSuperset(container, exoA, idxA, exoB, idxB, progName) {
         html += `<div class="set-block">`;
         if (s <= exoA.sets) {
             const dataA = getSplitPerf(exoA.name, s, progName, idxA);
-            const mainPerfHTMLA = (dataA && dataA.main) ? `<span class="last-perf">Précédent : ${dataA.main}</span>` : '';
+            let mainPerfHTMLA = '';
+            if (dataA && dataA.main) {
+                let dropPartA = dataA.drop ? `<span id="hint_drop_${idxA}_${s}"> + ${dataA.drop}</span>` : '';
+                mainPerfHTMLA = `<span class="last-perf">Précédent : ${dataA.main}${dropPartA}</span>`;
+            }
             html += `<div class="serie-container" id="container_${idxA}_${s}"><div class="input-row"><div class="set-col"><div class="set-num">A</div><button class="btn-mini-add" onclick="ajouterDegressive('${idxA}_${s}', '${safeExoNameA}', '${safeProgName}', ${s})">+</button></div>${createInputWithUnit(`p_${idxA}_${s}`, 'kg')}${createInputWithUnit(`r_${idxA}_${s}`, 'reps')}</div>${mainPerfHTMLA}</div>`;
         }
         if (s <= exoB.sets) {
             const dataB = getSplitPerf(exoB.name, s, progName, idxB);
-            const mainPerfHTMLB = (dataB && dataB.main) ? `<span class="last-perf">Précédent : ${dataB.main}</span>` : '';
+            let mainPerfHTMLB = '';
+            if (dataB && dataB.main) {
+                let dropPartB = dataB.drop ? `<span id="hint_drop_${idxB}_${s}"> + ${dataB.drop}</span>` : '';
+                mainPerfHTMLB = `<span class="last-perf">Précédent : ${dataB.main}${dropPartB}</span>`;
+            }
             html += `<div class="serie-container" id="container_${idxB}_${s}"><div class="input-row"><div class="set-col"><div class="set-num">B</div><button class="btn-mini-add" onclick="ajouterDegressive('${idxB}_${s}', '${safeExoNameB}', '${safeProgName}', ${s})">+</button></div>${createInputWithUnit(`p_${idxB}_${s}`, 'kg')}${createInputWithUnit(`r_${idxB}_${s}`, 'reps')}</div>${mainPerfHTMLB}</div>`;
         }
         html += `</div>`;
@@ -169,7 +181,21 @@ function renderSuperset(container, exoA, idxA, exoB, idxB, progName) {
     container.innerHTML += html;
 }
 
+function removeDropRow(btn, baseId) {
+    const row = btn.closest('.drop-row');
+    const container = row.parentElement;
+    row.remove();
+    if (container.querySelectorAll('.drop-row').length === 0) {
+        const hint = document.getElementById('hint_drop_' + baseId);
+        if (hint) hint.style.display = 'inline';
+    }
+    saveCurrentSessionState();
+}
+
 function ajouterDegressive(baseId, exoName, progName, setNum, restorationMode = false) {
+    const topHint = document.getElementById('hint_drop_' + baseId);
+    if (topHint) topHint.style.display = 'none';
+
     const container = document.getElementById('container_' + baseId);
     const dropIndex = container.querySelectorAll('.drop-row').length;
     const dropWeightId = `drop_w_${baseId}_${dropIndex}`;
@@ -178,13 +204,13 @@ function ajouterDegressive(baseId, exoName, progName, setNum, restorationMode = 
     const div = document.createElement('div'); div.className = 'input-row drop-row';
 
     let dropHint = '';
-    if (!restorationMode) {
+    if (!restorationMode && dropIndex === 0) {
         const currentIdx = parseInt(baseId.split('_')[0]);
         const data = getSplitPerf(exoName, setNum, progName, currentIdx);
         dropHint = (data && data.drop) ? `<span class="last-perf" style="margin-left:45px;">Précédent : ${data.drop}</span>` : '';
     }
 
-    div.innerHTML = `<div class="set-col"><div class="drop-icon" onclick="this.closest('.drop-row').remove(); saveCurrentSessionState();" title="Supprimer">↳</div></div>${createDropInput(dropWeightId, 'drop-weight', 'kg')}${createDropInput(dropRepsId, 'drop-reps', 'reps')}`;
+    div.innerHTML = `<div class="set-col"><div class="drop-icon" onclick="removeDropRow(this, '${baseId}')" title="Supprimer">↳</div></div>${createDropInput(dropWeightId, 'drop-weight', 'kg')}${createDropInput(dropRepsId, 'drop-reps', 'reps')}`;
     div.style.flexWrap = "wrap";
     if (dropHint) div.innerHTML += `<div style="width:100%;">${dropHint}</div>`;
 
