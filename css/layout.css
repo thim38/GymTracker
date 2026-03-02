@@ -1,0 +1,164 @@
+/* --- BARRE DE NAVIGATION FIXE EN BAS --- */
+.nav-bar {
+    position: fixed !important;
+    bottom: 45px !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 auto !important;
+    width: 90% !important;
+    max-width: 400px !important;
+    height: 50px !important;
+
+    background-color: white !important;
+    border-radius: 35px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+
+    display: flex !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+
+    z-index: 1000 !important;
+    padding-bottom: 0 !important;
+    pointer-events: auto !important;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease !important;
+}
+
+/* La classe qui cache la barre vers le bas (Scroll) */
+.nav-bar.scroll-hidden {
+    transform: translateY(150%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* La classe qui cache la barre quand le clavier est ouvert */
+.nav-bar.keyboard-active {
+    transform: translateY(200%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: transform 0.1s ease-out !important;
+}
+
+.nav-item {
+    background: transparent;
+    color: #adb5bd;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border: none;
+    pointer-events: auto !important;
+}
+
+.nav-item.active {
+    color: var(--text-main);
+    transform: scale(1.1);
+}
+
+/* --- HAUT DE PAGE / PARAMETRES --- */
+.btn-settings-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #fff;
+    border: 1px solid #eee;
+    color: var(--text-main);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 200;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.btn-settings-icon:active {
+    transform: scale(0.95);
+}
+
+/* --- MODALES PARAMETRES & IMPORT/EXPORT --- */
+.settings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-body);
+    z-index: 5000;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    animation: fadeInUp 0.3s ease;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-top: 10px;
+}
+
+.settings-header h2 {
+    margin: 0;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+}
+
+.btn-close-settings {
+    background: #e9ecef;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--text-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-section {
+    background: #fff;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.settings-section h3 {
+    margin-top: 0;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    color: #b2bec3;
+}
+
+.backup-area {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px dashed #e9ecef;
+    text-align: center;
+}
+
+.btn-backup {
+    background: var(--brand);
+    color: white;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    border-radius: 16px;
+}
+
+.btn-restore {
+    background: #636e72;
+    color: white;
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+    border-radius: 16px;
+}

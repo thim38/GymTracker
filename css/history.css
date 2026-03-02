@@ -1,0 +1,343 @@
+/* --- HISTORIQUE (MODE LISTE) --- */
+.hist-category-btn {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: fadeInUp 0.3s ease backwards;
+}
+
+.hist-cat-title {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--text-main);
+}
+
+.hist-count {
+    background: var(--input-bg);
+    color: #636e72;
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.btn-back-hist {
+    display: inline-block;
+    margin-bottom: 15px;
+    font-weight: 700;
+    color: var(--text-gray);
+    background: var(--input-bg);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+.hist-session {
+    background: #fff;
+    border-radius: 24px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    animation: fadeInUp 0.3s ease backwards;
+}
+
+.hist-header {
+    padding: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+}
+
+.hist-date-large {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.hist-body {
+    display: none;
+    padding: 0 20px 20px;
+    border-top: 1px solid #f1f3f5;
+}
+
+.hist-body.open {
+    display: block;
+}
+
+.hist-exo-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed #eee;
+    font-size: 0.9rem;
+}
+
+.hist-exo-name {
+    font-weight: 700;
+    color: #2d3436;
+}
+
+.hist-exo-perf {
+    color: #636e72;
+    text-align: right;
+}
+
+.hist-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-hist-mini {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s ease-in-out;
+}
+
+.btn-hist-mini:active {
+    transform: scale(0.95);
+}
+
+.btn-hist-edit {
+    background: #fff;
+    color: var(--text-main);
+    border: 1px solid #e9ecef;
+}
+
+.btn-hist-del {
+    background: #4b5563;
+    color: white;
+}
+
+
+/* --- CALENDRIER --- */
+.calendar-wrapper {
+    background: #fff;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    animation: fadeInUp 0.4s ease;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-cal-nav {
+    background: var(--input-bg);
+    color: var(--text-main);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.cal-weekday {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #b2bec3;
+    text-transform: uppercase;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.cal-day {
+    aspect-ratio: 1/1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    position: relative;
+    background: #f8f9fa;
+    color: #b2bec3;
+    border: 2px solid transparent;
+}
+
+.cal-day.active-month {
+    background: #fff;
+    color: var(--text-main);
+    border-color: #f1f3f5;
+}
+
+.cal-day.has-session {
+    background-color: #e2e6ea !important;
+    color: var(--text-main) !important;
+    font-weight: 800;
+    border-color: #dee2e6 !important;
+}
+
+.cal-day.has-session::after {
+    display: none !important;
+}
+
+.cal-day.selected {
+    background: #2d3436 !important;
+    color: #fff !important;
+    border-color: #2d3436 !important;
+}
+
+.cal-day.today {
+    border: 2px solid var(--brand) !important;
+}
+
+.session-item-detail {
+    background: #fff;
+    padding: 15px;
+    border-radius: 16px;
+    margin-bottom: 10px;
+    border-left: 8px solid #ced4da;
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: fadeInUp 0.3s ease;
+    border: 1px solid var(--border-light);
+}
+
+.session-item-detail span {
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+
+/* --- SUIVI POIDS & SEGMENTED CONTROL --- */
+.segmented-control {
+    display: flex;
+    background: #e9ecef;
+    padding: 4px;
+    border-radius: 16px;
+    margin-bottom: 25px;
+}
+
+.segment-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: #636e72;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.segment-btn.active {
+    background: #fff;
+    color: var(--text-main);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.weight-input-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.date-input-styled {
+    background: #fff;
+    border: none;
+    border-radius: 16px;
+    color: var(--text-gray);
+    box-shadow: var(--shadow);
+    width: 120px;
+    height: 48px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+}
+
+.btn-add-weight {
+    background: var(--brand);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    width: 50px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(45, 52, 54, 0.2);
+}
+
+.btn-add-weight:active {
+    transform: scale(0.95);
+}
+
+.chart-container {
+    background: #fff;
+    border-radius: 24px;
+    padding: 15px;
+    box-shadow: var(--shadow);
+    height: 250px;
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.weight-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 15px;
+    border-radius: 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    animation: fadeInUp 0.3s ease backwards;
+}
+
+.weight-date {
+    font-weight: 600;
+    color: #b2bec3;
+    font-size: 0.9rem;
+}
+
+.weight-val {
+    font-weight: 800;
+    color: var(--text-main);
+    font-size: 1.1rem;
+}

@@ -1,0 +1,243 @@
+/* --- BUILDER (CREATION PROGRAMMES) --- */
+.builder-btn {
+    width: 100%;
+    padding: 20px;
+    background: #fff;
+    color: var(--text-main);
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
+    border-radius: 24px;
+    font-size: 1rem;
+    border: 1px solid transparent;
+}
+
+#builderArea {
+    background: #fff;
+    padding: 25px;
+    border-radius: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    animation: fadeInUp 0.3s ease;
+}
+
+.builder-block {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 16px;
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+}
+
+.builder-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.builder-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #b2bec3;
+    margin-bottom: 5px;
+    display: block;
+    text-transform: uppercase;
+}
+
+/* Conteneur de l'exercice dans la liste */
+.builder-item {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 16px;
+    margin-bottom: 10px;
+    padding: 15px 40px 15px 15px;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+    display: block;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, opacity 0.2s;
+    touch-action: pan-y;
+}
+
+.builder-item.editing-active {
+    border: 2px solid var(--brand);
+    background-color: #f8f9fa;
+    transform: scale(1.02);
+}
+
+/* DRAG & DROP */
+.builder-item.dragging-active {
+    opacity: 0.9;
+    background-color: #e9ecef !important;
+    transform: scale(1.03);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    border: 2px solid #2d3436;
+    pointer-events: none;
+}
+
+.builder-item.drag-over {
+    border: 2px dashed #b2bec3;
+    background-color: #f8f9fa;
+}
+
+.delete-x {
+    display: block !important;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #636e72;
+    font-weight: 900;
+    font-size: 1.1rem;
+    padding: 5px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.builder-click-zone {
+    width: 100%;
+    padding-right: 20px;
+}
+
+.builder-exo-name {
+    display: block;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #2d3436;
+    margin-bottom: 4px;
+}
+
+.builder-exo-info {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #636e72;
+}
+
+.builder-item-superset {
+    background-color: #f8f9fa;
+}
+
+.builder-actions-group {
+    display: none !important;
+}
+
+/* --- DRAG & DROP PROGRAMMES (Menu Principal) --- */
+.prog-item {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    touch-action: pan-y;
+    position: relative;
+}
+
+.prog-title {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #2d3436;
+}
+
+.prog-header-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.prog-item.dragging-active {
+    opacity: 0.9;
+    background-color: #e9ecef !important;
+    transform: scale(1.03);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    border: 2px solid #2d3436;
+    pointer-events: none;
+}
+
+.prog-item.drag-over {
+    border: 2px dashed #b2bec3;
+    background-color: #f8f9fa;
+}
+
+.prog-details-box {
+    padding: 20px;
+    background: #fff;
+    margin-bottom: 20px;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    display: none;
+}
+
+.prog-details-box.open {
+    display: block;
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.exo-wrapper {
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+}
+
+.superset-wrapper {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+}
+
+.prog-line,
+.prog-line-superset,
+.prog-line-superset-b {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 15px;
+}
+
+.prog-line {
+    padding: 16px 15px;
+    border-left: none;
+    background: transparent;
+}
+
+.prog-line-superset {
+    border-bottom: 1px dashed #e9ecef;
+    padding-bottom: 8px;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+.prog-line-superset-b {
+    border-bottom: none;
+    padding-top: 8px;
+    padding-bottom: 16px;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+.prog-line-name {
+    font-weight: 700;
+    color: #2d3436;
+    font-size: 0.95rem;
+    flex: 1;
+    white-space: normal !important;
+    text-align: left;
+    overflow: hidden;
+}
+
+.prog-line-info {
+    color: #636e72;
+    font-size: 0.85rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    white-space: nowrap !important;
+    text-align: right;
+}
