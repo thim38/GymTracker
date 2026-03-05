@@ -295,10 +295,72 @@ function addWeightEntry() {
 }
 
 function deleteWeight(index) {
+    // Legacy function, using direct splice in swipe logic now.
     if (confirm("Supprimer cette pesée ?")) {
         DB.weight.splice(index, 1);
         saveDB();
         renderWeightView();
+    }
+}
+
+// --- LOGIQUE SWIPE-TO-DELETE ---
+let touchStartX = 0;
+let currentX = 0;
+let swipingIndex = null;
+let isSwiping = false;
+
+function handleSwipeStart(index, event) {
+    if (event.touches.length > 1) return; // Ignore multi-touch
+    touchStartX = event.touches[0].clientX;
+    currentX = 0;
+    swipingIndex = index;
+    isSwiping = true;
+
+    const item = document.getElementById(`weight-item-${index}`);
+    if (item) {
+        item.classList.add('swiping');
+        item.style.transform = `translateX(0px)`;
+    }
+}
+
+function handleSwipeMove(index, event) {
+    if (!isSwiping || swipingIndex !== index) return;
+
+    const diffX = event.touches[0].clientX - touchStartX;
+
+    // Autoriser uniquement le swipe vers la gauche
+    if (diffX < 0) {
+        event.preventDefault(); // Empêcher le scroll de la page au même moment (si swipe horizontal très net)
+        const item = document.getElementById(`weight-item-${index}`);
+        if (item) {
+            item.style.transform = `translateX(${diffX}px)`;
+        }
+    }
+}
+
+function handleSwipeEnd(index, event) {
+    if (!isSwiping || swipingIndex !== index) return;
+    isSwiping = false;
+
+    const item = document.getElementById(`weight-item-${index}`);
+    if (!item) return;
+
+    item.classList.remove('swiping');
+
+    const diffX = event.changedTouches[0].clientX - touchStartX;
+
+    // Si on a assez glissé (100px)
+    if (diffX < -100) {
+        item.classList.add('deleted');
+        item.style.transform = `translateX(-100%)`; // Forcer l'anim si .deleted la redéfinit
+        setTimeout(() => {
+            DB.weight.splice(index, 1);
+            saveDB();
+            renderWeightView();
+        }, 300); // 300ms = durée de transition CSS
+    } else {
+        // Rebond (annulation)
+        item.style.transform = 'translateX(0px)';
     }
 }
 
@@ -318,11 +380,18 @@ function renderWeightList() {
         const dateStr = d.toLocaleDateString('fr-FR');
 
         listDiv.innerHTML += `
-            <div class="weight-item">
-                <span class="weight-date">${dateStr}</span>
-                <div style="display:flex; align-items:center; gap: 10px;">
-                    <span class="weight-val">${item.value} kg</span>
-                    <button class="btn-hist-mini btn-hist-del" onclick="deleteWeight(${realIndex})">Supprimer</button>
+            <div class="weight-item-wrapper" id="weight-wrapper-${realIndex}">
+                <div class="weight-item-bg">
+                    🗑️
+                </div>
+                <div class="weight-item" id="weight-item-${realIndex}" 
+                     ontouchstart="handleSwipeStart(${realIndex}, event)" 
+                     ontouchmove="handleSwipeMove(${realIndex}, event)" 
+                     ontouchend="handleSwipeEnd(${realIndex}, event)">
+                    <span class="weight-date">${dateStr}</span>
+                    <div style="display:flex; align-items:center; gap: 10px;">
+                        <span class="weight-val">${item.value} kg</span>
+                    </div>
                 </div>
             </div>
         `;
